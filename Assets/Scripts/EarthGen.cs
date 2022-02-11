@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class EarthGen : MonoBehaviour
 {
+    public float lowFreqAmp  = 30f;
+    public float midFreqAmp  = 6f;
+    public float highFreqAmp = 1f;
+
     float inc;
     // Start is called before the first frame update
     void Start()
     {
+
         inc=0.5f;
         float y;
         /*
@@ -19,6 +24,7 @@ public class EarthGen : MonoBehaviour
         float ZRandOffset3 = Random.Range(-10000, 10000);
         */
         
+
         float XRandOffset1 = 500;
         float ZRandOffset1 = 700;
         float XRandOffset2 = 2000;
@@ -30,9 +36,10 @@ public class EarthGen : MonoBehaviour
         {
             for (int z = 50; z < 150; z++)
             {
-                y = ((30 * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
-                    //+ (1 * ((2*(Mathf.PerlinNoise((x + XRandOffset2) / 4f, (z + ZRandOffset2) / 4f)))- 1)) // High Frequency
-                    + (6 * ((2* (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) -1))); // Med Frequency
+                y =  ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
+                    + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
+                    + (highFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset2) / 4f, (z + ZRandOffset2) / 4f))) - 1))); // High Frequency
+
                 //Debug.Log("Perlin result: " + y);
                 GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 100, z, "Grass");
             }
