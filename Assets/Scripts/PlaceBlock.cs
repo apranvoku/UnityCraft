@@ -10,6 +10,7 @@ public class PlaceBlock : MonoBehaviour
     public GameObject Oak;
     public GameObject Grass;
     public GameObject Glass;
+    public GameObject Dirt;
 
     public List<GameObject> Blocks;
     public GameObject CanvasBlocks;
@@ -25,6 +26,7 @@ public class PlaceBlock : MonoBehaviour
         Blocks.Add(Oak);
         Blocks.Add(Grass);
         Blocks.Add(Glass);
+        Blocks.Add(Dirt);
 
         index = Blocks.Count - 1;
 
@@ -98,6 +100,10 @@ public class PlaceBlock : MonoBehaviour
         if (name == "Glass")
         {
             Instantiate(Glass, new Vector3(x, y, z), Grass.transform.rotation, SaveableBlocks.transform);
+        }
+        if (name == "Dirt")
+        {
+            Instantiate(Dirt, new Vector3(x, y, z), Grass.transform.rotation, SaveableBlocks.transform);
         }
     }
 }

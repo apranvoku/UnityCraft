@@ -24,19 +24,19 @@ public class PlayerController : MonoBehaviour
         //transform.position += new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         if (Input.GetKey(KeyCode.W))
         {
-            rb.MovePosition(transform.position += transform.forward/40f);
+            rb.MovePosition(transform.position += transform.forward/20f);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            rb.MovePosition(transform.position -= transform.right / 40f);
+            rb.MovePosition(transform.position -= transform.right / 20f);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            rb.MovePosition(transform.position -= transform.forward / 40f);
+            rb.MovePosition(transform.position -= transform.forward / 20f);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            rb.MovePosition(transform.position += transform.right / 40f);
+            rb.MovePosition(transform.position += transform.right / 20f);
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {

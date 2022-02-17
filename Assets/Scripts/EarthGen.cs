@@ -15,26 +15,27 @@ public class EarthGen : MonoBehaviour
 
         inc=0.5f;
         float y;
-        /*
+        
         float XRandOffset1 = Random.Range(-10000, 10000);
         float ZRandOffset1 = Random.Range(-10000, 10000);
         float XRandOffset2 = Random.Range(-10000, 10000);
         float ZRandOffset2 = Random.Range(-10000, 10000);
         float XRandOffset3 = Random.Range(-10000, 10000);
         float ZRandOffset3 = Random.Range(-10000, 10000);
-        */
         
-
+        
+        /*
         float XRandOffset1 = 500;
         float ZRandOffset1 = 700;
         float XRandOffset2 = 2000;
         float ZRandOffset2 = 2200;
         float XRandOffset3 = 3000;
         float ZRandOffset3 = 5000;
+        */
         
-        for (int x = 50; x < 150; x++)
+        for (int x = 0; x < 40; x++)
         {
-            for (int z = 50; z < 150; z++)
+            for (int z = 0; z < 40; z++)
             {
                 y =  ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
                     + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
@@ -42,6 +43,8 @@ public class EarthGen : MonoBehaviour
 
                 //Debug.Log("Perlin result: " + y);
                 GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 100, z, "Grass");
+                GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 101, z, "Dirt");
+                //GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 102, z, "Dirt");
             }
         }
         
