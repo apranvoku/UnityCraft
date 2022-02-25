@@ -34,7 +34,7 @@ public class DetectPlayModeChanges : MonoBehaviour
                 {
                     //Debug.Log(shortString);
                     string[] splitString = shortString.Split(":");//index 0 - 2 is position, 3 is name.
-                    GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(float.Parse(splitString[0]), float.Parse(splitString[1]), float.Parse(splitString[2]), splitString[3]);
+                    //GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(float.Parse(splitString[0]), float.Parse(splitString[1]), float.Parse(splitString[2]), splitString[3]);
                     //Debug.Log("Here");
                 }
                 break;
