@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class VoxelRender : MonoBehaviour
 {
-    Mesh mesh;
+    public Mesh mesh;
     List<Vector3> vertices;
     List<int> triangles;
     List<Vector2> uvs;
@@ -23,6 +23,8 @@ public class VoxelRender : MonoBehaviour
     float ZRandOffset3;
 
     float y;
+
+    public bool locked;
     private void Awake()
     {
         mesh = GetComponent<MeshFilter>().mesh;
@@ -30,6 +32,7 @@ public class VoxelRender : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        locked = false;
         XRandOffset1 = Random.Range(-10000, 10000);
         ZRandOffset1 = Random.Range(-10000, 10000);
         XRandOffset2 = Random.Range(-10000, 10000);
@@ -46,21 +49,21 @@ public class VoxelRender : MonoBehaviour
         uvs = new List<Vector2>();
         vertices = new List<Vector3>();
         triangles = new List<int>();
-
-        for (int x = 0; x < 100; x++)
-        {
-            for (int z = 0; z < 100; z++)
+        //StartCoroutine(Generation());
+            for (int x = 0; x < 10; x++)
             {
-                 y = ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
-                    + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
-                    + (highFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset2) / 4f, (z + ZRandOffset2) / 4f))) - 1))); // High Frequency
+                for (int z = 0; z < 10; z++)
+                {
+                        y = ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
+                           + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
+                           + (highFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset2) / 4f, (z + ZRandOffset2) / 4f))) - 1))); // High Frequency
+                        MakeCube(new Vector3(x,(int)y + 100, z));
+                        //Debug.Log("Perlin result: " + y);
+                        //GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 102, z, "Dirt");
 
-                MakeCube(new Vector3(x,(int)y - 100, z));
-                //Debug.Log("Perlin result: " + y);
-                //GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 102, z, "Dirt");
+                    
+                }
             }
-        }
-
     }
     /*
     for (int z = 0; z < data.Depth; z++)
@@ -83,7 +86,6 @@ public class VoxelRender : MonoBehaviour
             MakeFace(i, cubePos);
             AssignUVs(i);
         }
-
     }
 
     void AssignUVs(int dir)
@@ -146,6 +148,10 @@ public class VoxelRender : MonoBehaviour
         triangles.Add(vcount - 4 + 3);
     }
     // Update is called once per frame
+    private void Update()
+    {
+        
+    }
     void UpdateMesh()
     {
         mesh.Clear();
@@ -158,8 +164,38 @@ public class VoxelRender : MonoBehaviour
         GetComponent<MeshCollider>().sharedMesh = transform.GetComponent<MeshFilter>().mesh;
     }
 
-    public Vector2 ConvertPixelsToUVCoordinates(int x, int y)
+    public IEnumerator DelayedMakeCube(Vector3 pos)
     {
-        return new Vector2((float)x/16, (float)y/16);
+        Debug.Log("building at " + pos.ToString());
+        for (int i = 0; i < 6; i++)
+        {
+            MakeFace(i, pos);
+            yield return new WaitForSeconds(0.1f);
+            AssignUVs(i);
+            //yield return new WaitForSeconds(0.1f);
+        }
+        mesh.Clear();
+        mesh.vertices = vertices.ToArray();
+        mesh.uv = uvs.ToArray();
+
+        mesh.triangles = triangles.ToArray();
+        mesh.RecalculateNormals();
+    }
+    public IEnumerator Generation()
+    {
+        for (int x = 0; x < 20; x++)
+        {
+            for (int z = 0; z < 20; z++)
+            {
+                    y = ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
+                       + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
+                       + (highFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset2) / 4f, (z + ZRandOffset2) / 4f))) - 1))); // High Frequency
+                    StartCoroutine(DelayedMakeCube(new Vector3(x, (int)y - 100, z)));
+                    //MakeCube(new Vector3(x,(int)y - 100, z));
+                    //Debug.Log("Perlin result: " + y);
+                    //GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 102, z, "Dirt");
+                    yield return new WaitForSeconds(0.1f);
+            }
+        }
     }
 }

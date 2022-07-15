@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System.Linq;
+using System;
 
 public class PlaceBlock : MonoBehaviour
 {
@@ -48,9 +50,12 @@ public class PlaceBlock : MonoBehaviour
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))//Does the raycast hit anything
             {
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow, 0.1f);
-                Vector3 nearestPoint = GetNearestVertex(hit.point, hit.transform.GetComponent<MeshFilter>().mesh);
+                Vector3 nearestPoint = GetApproximateCornerVertex(hit.point, hit.transform.GetComponent<MeshFilter>().mesh, hit.normal);
                 //Debug.Log(nearestPoint);
-                Instantiate(Blocks[index], nearestPoint + hit.normal, Blocks[index].transform.rotation, SaveableBlocks.transform);
+                //Debug.Log(hit.barycentricCoordinate);
+                Debug.Log(hit.normal);
+                Debug.DrawLine(nearestPoint, nearestPoint + hit.normal, Color.red, 5f);
+                Instantiate(Blocks[index], nearestPoint, Blocks[index].transform.rotation, SaveableBlocks.transform);
             }
         }
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
@@ -75,60 +80,65 @@ public class PlaceBlock : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))//Does the raycast hit anything
             {
-                if(hit.transform.gameObject.name != "Player")
+                if (hit.transform.gameObject.name != "Player")
                 {
                     Destroy(hit.transform.gameObject);
                 }
-               
+
             }
         }
     }
-    public Vector3 GetNearestVertex(Vector3 point, Mesh mesh)
+    public Vector3 GetApproximateCornerVertex(Vector3 point, Mesh mesh, Vector3 normal)
     {
         SortedDictionary<float, Vector3> pointDist = new SortedDictionary<float, Vector3>();
-        float minDistanceSqr = Mathf.Infinity;
-        Vector3 nearestVertex = Vector3.zero;
         // scan all vertices to find nearest
+        int entries = 0;
         foreach (Vector3 vertex in mesh.vertices)
         {
             Vector3 diff = point - vertex;
-            float distSqr = diff.sqrMagnitude;
+            float distance = diff.magnitude;
             try
             {
-                pointDist.Add(distSqr, point);
+                pointDist.Add(distance, vertex);
+                entries++;
+                if (entries > 3)
+                {
+                    pointDist.Remove(pointDist.Keys.Max());
+                }
             }
-            catch(System.ArgumentException e)
+            catch (System.ArgumentException e)
             {
                 continue;
             }
-            /*if (distSqr < minDistanceSqr)
-            {
-                minDistanceSqr = distSqr;
-                nearestVertex = vertex;
-            }*/
         }
         // convert nearest vertex back to world space
         int i = 0;
-        Vector3[] closestPoints = new Vector3[4];
+        Vector3[] closestPoints = new Vector3[3];
         foreach (KeyValuePair<float, Vector3> pair in pointDist)
         {
             closestPoints[i] = pair.Value;
-            Debug.Log(pair.Key);
-            Debug.Log(pair.Value);
-            i++;
-            if(i == 4)
+            Debug.Log(pair.Key + " : " + pair.Value);
+            if(pair.Key >= 1f)
             {
-                break;
+                throw new Exception();
             }
+            i++;
         }
         float x = 0; float y = 0; float z = 0;
-        for(int j = 0; j < closestPoints.Length; j++)
+        for (int j = 0; j < closestPoints.Length; j++)
         {
             x += closestPoints[j].x;
             y += closestPoints[j].y;
             z += closestPoints[j].z;
         }
-        return new Vector3(x/4f, y/4, z/4);
+        if (normal.x < 0 || normal.y < 0 || normal.z < 0)
+        {
+            return new Vector3(Mathf.Floor(x / 3f), Mathf.Floor(y / 3), Mathf.Floor(z / 3)) + normal;
+        }
+        else
+        {
+            return new Vector3(Mathf.Floor(x / 3f), Mathf.Floor(y / 3), Mathf.Floor(z / 3));
+        }
     }
 
 
