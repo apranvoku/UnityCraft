@@ -23,7 +23,6 @@ public class EarthGen : MonoBehaviour
         float XRandOffset3 = Random.Range(-10000, 10000);
         float ZRandOffset3 = Random.Range(-10000, 10000);
         
-        
         /*
         float XRandOffset1 = 500;
         float ZRandOffset1 = 700;
@@ -33,9 +32,9 @@ public class EarthGen : MonoBehaviour
         float ZRandOffset3 = 5000;
         */
         
-        for (int x = 0; x < 40; x++)
+        for (int x = 0; x < 100; x++)
         {
-            for (int z = 0; z < 40; z++)
+            for (int z = 0; z < 100; z++)
             {
                 y =  ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
                     + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency

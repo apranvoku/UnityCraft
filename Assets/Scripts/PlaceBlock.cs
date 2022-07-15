@@ -16,7 +16,7 @@ public class PlaceBlock : MonoBehaviour
     public GameObject CanvasBlocks;
     public GameObject Border;
     public GameObject SaveableBlocks;
-    private int index;
+    public int index;
     int layerMask;
     void Start()
     {
@@ -48,7 +48,9 @@ public class PlaceBlock : MonoBehaviour
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))//Does the raycast hit anything
             {
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow, 0.1f);
-                Instantiate(Blocks[index], hit.transform.position + hit.normal, Blocks[index].transform.rotation, SaveableBlocks.transform);
+                Vector3 nearestPoint = GetNearestVertex(hit.point, hit.transform.GetComponent<MeshFilter>().mesh);
+                //Debug.Log(nearestPoint);
+                Instantiate(Blocks[index], nearestPoint + hit.normal, Blocks[index].transform.rotation, SaveableBlocks.transform);
             }
         }
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
@@ -81,8 +83,58 @@ public class PlaceBlock : MonoBehaviour
             }
         }
     }
+    public Vector3 GetNearestVertex(Vector3 point, Mesh mesh)
+    {
+        SortedDictionary<float, Vector3> pointDist = new SortedDictionary<float, Vector3>();
+        float minDistanceSqr = Mathf.Infinity;
+        Vector3 nearestVertex = Vector3.zero;
+        // scan all vertices to find nearest
+        foreach (Vector3 vertex in mesh.vertices)
+        {
+            Vector3 diff = point - vertex;
+            float distSqr = diff.sqrMagnitude;
+            try
+            {
+                pointDist.Add(distSqr, point);
+            }
+            catch(System.ArgumentException e)
+            {
+                continue;
+            }
+            /*if (distSqr < minDistanceSqr)
+            {
+                minDistanceSqr = distSqr;
+                nearestVertex = vertex;
+            }*/
+        }
+        // convert nearest vertex back to world space
+        int i = 0;
+        Vector3[] closestPoints = new Vector3[4];
+        foreach (KeyValuePair<float, Vector3> pair in pointDist)
+        {
+            closestPoints[i] = pair.Value;
+            Debug.Log(pair.Key);
+            Debug.Log(pair.Value);
+            i++;
+            if(i == 4)
+            {
+                break;
+            }
+        }
+        float x = 0; float y = 0; float z = 0;
+        for(int j = 0; j < closestPoints.Length; j++)
+        {
+            x += closestPoints[j].x;
+            y += closestPoints[j].y;
+            z += closestPoints[j].z;
+        }
+        return new Vector3(x/4f, y/4, z/4);
+    }
 
-    public void PlaceNewBlock(float x, float y, float z, string name)
+
+
+
+public void PlaceNewBlock(float x, float y, float z, string name)
     {
         //Debug.Log(x + " " + y + " " + z + " " + name);
         if (name == "Plank")
