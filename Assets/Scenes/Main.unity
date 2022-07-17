@@ -263,7 +263,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 260712694}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 146db9b15f7ab1e478904d6d8c8d6b98, type: 3}
   m_Name: 
@@ -503,15 +503,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7e2801f93f04b5941a5c68c09fa679d7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7e2801f93f04b5941a5c68c09fa679d7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 200
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7e2801f93f04b5941a5c68c09fa679d7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7e2801f93f04b5941a5c68c09fa679d7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1375,7 +1375,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1350488477513498340, guid: 421dcf3e51d11e24585b56f966a2b5ff, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1350488477513498340, guid: 421dcf3e51d11e24585b56f966a2b5ff, type: 3}
       propertyPath: lowFreqAmp

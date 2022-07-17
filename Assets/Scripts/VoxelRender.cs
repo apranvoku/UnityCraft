@@ -6,10 +6,11 @@ using UnityEngine;
 
 public class VoxelRender : MonoBehaviour
 {
+    public static VoxelRender instance { get; private set; }
     public Mesh mesh;
-    List<Vector3> vertices;
-    List<int> triangles;
-    List<Vector2> uvs;
+    public List<Vector3> vertices;
+    public List<int> triangles;
+    public List<Vector2> uvs;
 
     public float lowFreqAmp = 30f;
     public float midFreqAmp = 6f;
@@ -24,15 +25,22 @@ public class VoxelRender : MonoBehaviour
 
     float y;
 
-    public bool locked;
     private void Awake()
     {
+        // If there is an instance, and it's not me, delete myself.
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
         mesh = GetComponent<MeshFilter>().mesh;
     }
     // Start is called before the first frame update
     void Start()
     {
-        locked = false;
         XRandOffset1 = Random.Range(-10000, 10000);
         ZRandOffset1 = Random.Range(-10000, 10000);
         XRandOffset2 = Random.Range(-10000, 10000);
@@ -58,6 +66,7 @@ public class VoxelRender : MonoBehaviour
                            + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
                            + (highFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset2) / 4f, (z + ZRandOffset2) / 4f))) - 1))); // High Frequency
                         MakeCube(new Vector3(x,(int)y + 100, z));
+                        //Debug.Log("making cube at : " + x + " : "+ (int)y + " : " + z);
                         //Debug.Log("Perlin result: " + y);
                         //GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 102, z, "Dirt");
 
@@ -79,7 +88,7 @@ public class VoxelRender : MonoBehaviour
     }*/
 
 
-    void MakeCube(Vector3 cubePos)
+    public void MakeCube(Vector3 cubePos)
     {
         for (int i = 0; i < 6; i++)
         {
@@ -87,6 +96,27 @@ public class VoxelRender : MonoBehaviour
             AssignUVs(i);
         }
     }
+
+    public void DestroyCube(int tIndex)//Wtf??
+    {
+        Debug.Log(tIndex);
+        int lowestNearestTriangle = tIndex - (tIndex % 12); //Get lowest triangle multiple of 36 E.G 82 - 82 % 36 = 72
+        int lowestNearestVertex = (lowestNearestTriangle / 12) * 24; //Get equivalent starting vertex for that triangle.
+        Debug.Log("Lowest nearest triangle index: " + lowestNearestTriangle);
+        Debug.Log("Lowest nearest vertex index: " + lowestNearestVertex);
+        for (int i = lowestNearestTriangle; i < lowestNearestTriangle + 12; i++)//Remove next 36 triangle formations.
+        {
+            triangles[i] = 0;
+        }
+        for (int i = lowestNearestVertex; i < lowestNearestVertex + 24; i++)//Remove next 24 vertices.
+        {
+            vertices[i] = Vector3.zero;
+            uvs[i] = Vector2.zero;
+        }
+
+        UpdateMesh();
+    }
+
 
     void AssignUVs(int dir)
     {
@@ -136,6 +166,7 @@ public class VoxelRender : MonoBehaviour
 
     void MakeFace(int dir, Vector3 facePos)
     {
+        //Debug.Log("Making face" + dir + "at face pos" + facePos);
         vertices.AddRange(CubeMeshData.faceVertices(dir, facePos));
 
         int vcount = vertices.Count;
@@ -152,7 +183,7 @@ public class VoxelRender : MonoBehaviour
     {
         
     }
-    void UpdateMesh()
+    public void UpdateMesh()
     {
         mesh.Clear();
         mesh.vertices = vertices.ToArray();

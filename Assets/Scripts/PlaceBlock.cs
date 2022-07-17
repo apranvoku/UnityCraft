@@ -50,12 +50,19 @@ public class PlaceBlock : MonoBehaviour
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask))//Does the raycast hit anything
             {
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow, 0.1f);
-                Vector3 nearestPoint = GetApproximateCornerVertex(hit.point, hit.transform.GetComponent<MeshFilter>().mesh, hit.normal);
+                //Vector3 nearestPoint = GetApproximateCornerVertex(hit.point, hit.transform.GetComponent<MeshFilter>().mesh, hit.normal);
+                Vector3 nearestPoint = GetApproximateCornerVertexTriangle(hit.triangleIndex, hit.normal);
+
+
+
+
                 //Debug.Log(nearestPoint);
                 //Debug.Log(hit.barycentricCoordinate);
-                Debug.Log(hit.normal);
+                //Debug.Log(hit.normal);
                 Debug.DrawLine(nearestPoint, nearestPoint + hit.normal, Color.red, 5f);
-                Instantiate(Blocks[index], nearestPoint, Blocks[index].transform.rotation, SaveableBlocks.transform);
+                VoxelRender.instance.MakeCube(nearestPoint);//Add to mesh?
+                VoxelRender.instance.UpdateMesh();
+                //Instantiate(Blocks[index], nearestPoint, Blocks[index].transform.rotation, SaveableBlocks.transform);
             }
         }
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
@@ -82,10 +89,47 @@ public class PlaceBlock : MonoBehaviour
             {
                 if (hit.transform.gameObject.name != "Player")
                 {
-                    Destroy(hit.transform.gameObject);
+                    VoxelRender.instance.DestroyCube(hit.triangleIndex);
+                    //Destroy(hit.transform.gameObject);
                 }
 
             }
+        }
+    }
+    public Vector3 GetApproximateCornerVertexTriangle(int tindex, Vector3 normal)
+    {
+        List<Vector3> tpoints = new List<Vector3>();
+        if (tindex % 2 == 0)//Even
+        {
+            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4]);
+            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4 + 1]);
+            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4 + 2]);
+        }
+        else//Odd
+        {
+            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4]);
+            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4 + 2]);
+            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4 + 3]);
+        }
+        float x = 0; float y = 0; float z = 0;
+        for (int j = 0; j < tpoints.Count; j++)
+        {
+            x += tpoints[j].x;
+            y += tpoints[j].y;
+            z += tpoints[j].z;
+        }
+        Debug.Log(tindex);
+        foreach (Vector3 p in tpoints)
+        {
+            Debug.Log(p);
+        }
+        if (normal.x < 0 || normal.y < 0 || normal.z < 0)
+        {
+            return new Vector3(Mathf.Floor(x / 3f), Mathf.Floor(y / 3), Mathf.Floor(z / 3)) + normal;
+        }
+        else
+        {
+            return new Vector3(Mathf.Floor(x / 3f), Mathf.Floor(y / 3), Mathf.Floor(z / 3));
         }
     }
     public Vector3 GetApproximateCornerVertex(Vector3 point, Mesh mesh, Vector3 normal)
