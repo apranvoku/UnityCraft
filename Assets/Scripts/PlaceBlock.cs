@@ -59,6 +59,7 @@ public class PlaceBlock : MonoBehaviour
                 //Debug.Log(nearestPoint);
                 //Debug.Log(hit.barycentricCoordinate);
                 //Debug.Log(hit.normal);
+                Debug.Log(hit.triangleIndex);
                 Debug.DrawLine(nearestPoint, nearestPoint + hit.normal, Color.red, 5f);
                 VoxelRender.instance.MakeCube(nearestPoint);//Add to mesh?
                 VoxelRender.instance.UpdateMesh();

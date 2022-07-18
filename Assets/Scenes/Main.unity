@@ -263,7 +263,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 260712694}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 146db9b15f7ab1e478904d6d8c8d6b98, type: 3}
   m_Name: 
@@ -1375,15 +1375,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1350488477513498340, guid: 421dcf3e51d11e24585b56f966a2b5ff, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1350488477513498340, guid: 421dcf3e51d11e24585b56f966a2b5ff, type: 3}
       propertyPath: lowFreqAmp
-      value: 20
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 1350488477513498340, guid: 421dcf3e51d11e24585b56f966a2b5ff, type: 3}
       propertyPath: midFreqAmp
-      value: 5
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1350488477513498340, guid: 421dcf3e51d11e24585b56f966a2b5ff, type: 3}
+      propertyPath: highFreqAmp
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1350488477513498341, guid: 421dcf3e51d11e24585b56f966a2b5ff, type: 3}
       propertyPath: m_Name
