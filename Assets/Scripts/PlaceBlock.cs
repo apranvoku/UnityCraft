@@ -10,7 +10,7 @@ public class PlaceBlock : MonoBehaviour
     // Start is called before the first frame update
     public GameObject Plank;
     public GameObject Oak;
-    public GameObject Grass;
+    public GameObject Glowstone;
     public GameObject Glass;
     public GameObject Dirt;
 
@@ -26,7 +26,7 @@ public class PlaceBlock : MonoBehaviour
 
         Blocks.Add(Plank);
         Blocks.Add(Oak);
-        Blocks.Add(Grass);
+        Blocks.Add(Glowstone);
         Blocks.Add(Glass);
         Blocks.Add(Dirt);
 
@@ -52,18 +52,17 @@ public class PlaceBlock : MonoBehaviour
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow, 0.1f);
                 //Vector3 nearestPoint = GetApproximateCornerVertex(hit.point, hit.transform.GetComponent<MeshFilter>().mesh, hit.normal);
                 Vector3 nearestPoint = GetApproximateCornerVertexTriangle(hit.triangleIndex, hit.normal);
-
-
-
-
-                //Debug.Log(nearestPoint);
-                //Debug.Log(hit.barycentricCoordinate);
-                //Debug.Log(hit.normal);
-                Debug.Log(hit.triangleIndex);
                 Debug.DrawLine(nearestPoint, nearestPoint + hit.normal, Color.red, 5f);
-                VoxelRender.instance.MakeCube(nearestPoint);//Add to mesh?
-                VoxelRender.instance.UpdateMesh();
-                //Instantiate(Blocks[index], nearestPoint, Blocks[index].transform.rotation, SaveableBlocks.transform);
+                /*VoxelRender.instance.MakeCube(nearestPoint);//Add cube to mesh
+                VoxelRender.instance.UpdateMesh();*/ //
+                if(hit.transform.tag == "Voxel")
+                {
+                    Instantiate(Blocks[index], nearestPoint, Blocks[index].transform.rotation, SaveableBlocks.transform);
+                }
+                else
+                {
+                    Instantiate(Blocks[index], hit.transform.position + hit.normal, Blocks[index].transform.rotation, SaveableBlocks.transform);
+                }
             }
         }
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
@@ -90,10 +89,15 @@ public class PlaceBlock : MonoBehaviour
             {
                 if (hit.transform.gameObject.name != "Player")
                 {
-                    VoxelRender.instance.DestroyCube(hit.triangleIndex);
-                    //Destroy(hit.transform.gameObject);
+                    if (hit.transform.tag == "Voxel")
+                    {
+                        VoxelRender.instance.DestroyCube(hit.triangleIndex);
+                    }
+                    else
+                    {
+                        Destroy(hit.transform.gameObject);
+                    }
                 }
-
             }
         }
     }
@@ -119,11 +123,11 @@ public class PlaceBlock : MonoBehaviour
             y += tpoints[j].y;
             z += tpoints[j].z;
         }
-        Debug.Log(tindex);
+        /*Debug.Log(tindex);
         foreach (Vector3 p in tpoints)
         {
             Debug.Log(p);
-        }
+        }*/
         if (normal.x < 0 || normal.y < 0 || normal.z < 0)
         {
             return new Vector3(Mathf.Floor(x / 3f), Mathf.Floor(y / 3), Mathf.Floor(z / 3)) + normal;
@@ -200,17 +204,17 @@ public void PlaceNewBlock(float x, float y, float z, string name)
         {
             Instantiate(Oak, new Vector3(x, y, z), Oak.transform.rotation, SaveableBlocks.transform);
         }
-        if (name == "Grass")
+        if (name == "Glowstone")
         {
-            Instantiate(Grass, new Vector3(x, y, z), Grass.transform.rotation, SaveableBlocks.transform);
+            Instantiate(Glowstone, new Vector3(x, y, z), Glowstone.transform.rotation, SaveableBlocks.transform);
         }
         if (name == "Glass")
         {
-            Instantiate(Glass, new Vector3(x, y, z), Grass.transform.rotation, SaveableBlocks.transform);
+            Instantiate(Glass, new Vector3(x, y, z), Glass.transform.rotation, SaveableBlocks.transform);
         }
         if (name == "Dirt")
         {
-            Instantiate(Dirt, new Vector3(x, y, z), Grass.transform.rotation, SaveableBlocks.transform);
+            Instantiate(Dirt, new Vector3(x, y, z), Dirt.transform.rotation, SaveableBlocks.transform);
         }
     }
 }

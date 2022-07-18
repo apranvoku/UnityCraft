@@ -25,6 +25,24 @@ public class VoxelRender : MonoBehaviour
 
     float y;
 
+#if UNITY_EDITOR
+    public bool initializeMesh = false;
+
+    //You can have multiple booleans here
+    private void OnValidate()
+    {
+        if (initializeMesh)
+        {
+            // Your function here
+            GenerateVoxelMesh(new VoxelData());
+            UpdateMesh();
+
+            //When its done set this bool to false
+            //This is useful if you want to do some stuff only when clicking this "button"
+            initializeMesh = false;
+        }
+    }
+#endif
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
@@ -47,8 +65,7 @@ public class VoxelRender : MonoBehaviour
         ZRandOffset2 = Random.Range(-10000, 10000);
         XRandOffset3 = Random.Range(-10000, 10000);
         ZRandOffset3 = Random.Range(-10000, 10000);
-        GenerateVoxelMesh(new VoxelData());
-        UpdateMesh();
+
 
     }
 
@@ -99,11 +116,11 @@ public class VoxelRender : MonoBehaviour
 
     public void DestroyCube(int tIndex)//Wtf??
     {
-        Debug.Log(tIndex);
+        //Debug.Log(tIndex);
         int lowestNearestTriangle = tIndex - (tIndex % 12); //Get lowest triangle multiple of 36 E.G 82 - 82 % 36 = 72
         int lowestNearestVertex = (lowestNearestTriangle / 12) * 24; //Get equivalent starting vertex for that triangle.
-        Debug.Log("Lowest nearest triangle index: " + lowestNearestTriangle);
-        Debug.Log("Lowest nearest vertex index: " + lowestNearestVertex);
+        //Debug.Log("Lowest nearest triangle index: " + lowestNearestTriangle);
+        //Debug.Log("Lowest nearest vertex index: " + lowestNearestVertex);
         for (int i = lowestNearestTriangle*3; i < lowestNearestTriangle*3 + 36; i++)//Remove next 36 triangle formations.
         {
             triangles[i] = 0;

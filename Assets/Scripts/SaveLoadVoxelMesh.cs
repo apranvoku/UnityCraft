@@ -6,13 +6,13 @@ using System.IO;
 using System.Text.RegularExpressions;
 
 [InitializeOnLoad]
-public class DetectPlayModeChanges : MonoBehaviour
+public class SaveLoadVoxelMesh : MonoBehaviour
 {
-    static string fileName = "/save.txt";
+    static string fileName = "/meshSave.txt";
     static string buildString;
     static string[] readString;
 
-    static DetectPlayModeChanges()
+    static SaveLoadVoxelMesh()
     {
         EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
     }
@@ -27,25 +27,39 @@ public class DetectPlayModeChanges : MonoBehaviour
 
                 // Do whatever after entering play mode
                 break;
-            case PlayModeStateChange.EnteredPlayMode:
+            case PlayModeStateChange.EnteredPlayMode://Make blocks using save data.
+                Debug.Log("Restoring voxel mesh from file...");
                 readString = File.ReadAllLines(dir);
-                foreach(string shortString in readString)
+                foreach (string shortString in readString)
                 {
-                    //Debug.Log(shortString);
-                    string[] splitString = shortString.Split(":");//index 0 - 2 is position, 3 is name.
-                    GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(float.Parse(splitString[0]), float.Parse(splitString[1]), float.Parse(splitString[2]), splitString[3]);
-                    //Debug.Log("Here");
+                    string sVector = "";
+                    // Remove the parentheses
+                    if (shortString.StartsWith("(") && shortString.EndsWith(")"))
+                    {
+                        sVector = shortString.Substring(1, shortString.Length - 2);
+                    }
+
+                    // split the items
+                    string[] sArray = sVector.Split(',');
+                    Debug.Log(sArray.ToString());
+
+                    // store as a Vector3
+                    Vector3 result = new Vector3(
+                        float.Parse(sArray[0])-1f,
+                        float.Parse(sArray[1])-1f,
+                        float.Parse(sArray[2])-1f);
+
+                    VoxelRender.instance.MakeCube(result);
+                    VoxelRender.instance.UpdateMesh();
                 }
                 break;
             case PlayModeStateChange.ExitingPlayMode:
                 Debug.Log("Saving saveables to " + Application.persistentDataPath);
-                Transform Saveables = GameObject.Find("SaveableBlocks").transform;
 
-                foreach(Transform child in Saveables)
+                for (int v = 0; v < VoxelRender.instance.vertices.Count; v += 24)
                 {
-                    buildString += new string(child.transform.position.x + ":" + child.transform.position.y + ":" + child.transform.position.z + ":" + child.transform.name.Split("(")[0]);
+                    buildString += new string(VoxelRender.instance.vertices[v].ToString());
                     buildString += "\n";
-                    //Debug.Log(buildString);
                 }
                 File.WriteAllText(dir, buildString); //UNCOMMENT THIS LINE TO SAVE
 
