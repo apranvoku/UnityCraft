@@ -34,8 +34,9 @@ public class VoxelRender : MonoBehaviour
         if (initializeMesh)
         {
             // Your function here
-            GenerateVoxelMesh(new VoxelData());
-            UpdateMesh();
+            StartCoroutine(Generation());
+            //GenerateVoxelMesh(new VoxelData());
+            //UpdateMesh();
 
             //When its done set this bool to false
             //This is useful if you want to do some stuff only when clicking this "button"
@@ -55,6 +56,7 @@ public class VoxelRender : MonoBehaviour
             instance = this;
         }
         mesh = GetComponent<MeshFilter>().mesh;
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
     }
     // Start is called before the first frame update
     void Start()
@@ -75,19 +77,26 @@ public class VoxelRender : MonoBehaviour
         vertices = new List<Vector3>();
         triangles = new List<int>();
         //StartCoroutine(Generation());
-            for (int x = 0; x < 20; x++)
+            for (int x = 0; x < 70; x++)
             {
-                for (int z = 0; z < 20; z++)
+                for (int z = 0; z < 70; z++)
                 {
-                        y = ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
-                           + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
-                           + (highFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset2) / 4f, (z + ZRandOffset2) / 4f))) - 1))); // High Frequency
-                        MakeCube(new Vector3(x,(int)y + 100, z));
+                    y = ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
+                       + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
+                       + (highFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset2) / 4f, (z + ZRandOffset2) / 4f))) - 1))); // High Frequency
+                    if (y > -lowFreqAmp)
+                    {
+                        MakeCube(new Vector3(x, (int)y + 100, z));
+                        MakeCube(new Vector3(x, (int)y + 99, z));
+                        //MakeCube(new Vector3(x, (int)y + 98, z));
+                        //MakeCube(new Vector3(x, (int)y + 97, z));
+                        //MakeCube(new Vector3(x, (int)y + 96, z));
                         //Debug.Log("making cube at : " + x + " : "+ (int)y + " : " + z);
                         //Debug.Log("Perlin result: " + y);
                         //GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 102, z, "Dirt");
+                    }
 
-                    
+
                 }
             }
     }
@@ -231,9 +240,9 @@ public class VoxelRender : MonoBehaviour
     }
     public IEnumerator Generation()
     {
-        for (int x = 0; x < 20; x++)
+        for (int x = 0; x < 30; x++)
         {
-            for (int z = 0; z < 20; z++)
+            for (int z = 0; z < 30; z++)
             {
                     y = ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
                        + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
@@ -242,7 +251,7 @@ public class VoxelRender : MonoBehaviour
                     //MakeCube(new Vector3(x,(int)y - 100, z));
                     //Debug.Log("Perlin result: " + y);
                     //GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 102, z, "Dirt");
-                    yield return new WaitForSeconds(0.1f);
+                    yield return new WaitForSeconds(0.05f);
             }
         }
     }

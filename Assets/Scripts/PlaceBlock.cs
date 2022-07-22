@@ -87,6 +87,7 @@ public class PlaceBlock : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))//Does the raycast hit anything
             {
+                Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.blue, 0.5f);
                 if (hit.transform.gameObject.name != "Player")
                 {
                     if (hit.transform.tag == "Voxel")

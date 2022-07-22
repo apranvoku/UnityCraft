@@ -20,6 +20,7 @@ public class SaveLoadVoxelMesh : MonoBehaviour
     public static void OnPlayModeStateChanged(PlayModeStateChange state)
     {
         string dir = Application.persistentDataPath + fileName;
+        Debug.Log(Application.persistentDataPath);
         switch (state)
         {
             case PlayModeStateChange.ExitingEditMode:
@@ -41,7 +42,7 @@ public class SaveLoadVoxelMesh : MonoBehaviour
 
                     // split the items
                     string[] sArray = sVector.Split(',');
-                    Debug.Log(sArray.ToString());
+                    //Debug.Log(sArray.ToString());
 
                     // store as a Vector3
                     Vector3 result = new Vector3(
@@ -50,8 +51,8 @@ public class SaveLoadVoxelMesh : MonoBehaviour
                         float.Parse(sArray[2])-1f);
 
                     VoxelRender.instance.MakeCube(result);
-                    VoxelRender.instance.UpdateMesh();
                 }
+                VoxelRender.instance.UpdateMesh();
                 break;
             case PlayModeStateChange.ExitingPlayMode:
                 Debug.Log("Saving saveables to " + Application.persistentDataPath);
