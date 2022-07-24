@@ -34,9 +34,9 @@ public class VoxelRender : MonoBehaviour
         if (initializeMesh)
         {
             // Your function here
-            StartCoroutine(Generation());
-            //GenerateVoxelMesh(new VoxelData());
-            //UpdateMesh();
+            //StartCoroutine(Generation());
+            GenerateVoxelMesh(new VoxelData());
+            UpdateMesh();
 
             //When its done set this bool to false
             //This is useful if you want to do some stuff only when clicking this "button"
@@ -61,6 +61,11 @@ public class VoxelRender : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+    }
+
+    void GenerateVoxelMesh(VoxelData data)
+    {
         XRandOffset1 = Random.Range(-10000, 10000);
         ZRandOffset1 = Random.Range(-10000, 10000);
         XRandOffset2 = Random.Range(-10000, 10000);
@@ -68,18 +73,13 @@ public class VoxelRender : MonoBehaviour
         XRandOffset3 = Random.Range(-10000, 10000);
         ZRandOffset3 = Random.Range(-10000, 10000);
 
-
-    }
-
-    void GenerateVoxelMesh(VoxelData data)
-    {
         uvs = new List<Vector2>();
         vertices = new List<Vector3>();
         triangles = new List<int>();
         //StartCoroutine(Generation());
-            for (int x = 0; x < 70; x++)
+            for (int x = 0; x < 40; x++)
             {
-                for (int z = 0; z < 70; z++)
+                for (int z = 0; z < 40; z++)
                 {
                     y = ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
                        + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
