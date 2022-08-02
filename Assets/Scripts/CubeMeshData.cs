@@ -18,12 +18,12 @@ public static class CubeMeshData
     };
 
     public static int[][] faceTriangles = {
-    new int[]{0, 1, 2, 3 },//(1,1),(0,1),(0,0),(1,0) //North (x,y)
-    new int[]{5, 0, 3, 6 },//(1,0),(1,1),(0,1),(0,0) //Right (y,z)
-    new int[]{4, 5, 6, 7 },//(0,1),(1,1),(1,0),(0,0) //South (x,y)
-    new int[]{1, 4, 7, 2 },//(1,1),(1,0),(0,0),(0,1) //Left  (y,z)
-    new int[]{5, 4, 1, 0 },//(1,0),(0,0),(0,1),(1,1) //Top   (x,z)
-    new int[]{3, 2, 7, 6 },//(1,1),(0,1),(0,0),(1,0) //Bottom(x,z)
+    new int[]{0, 1, 2, 3 },//(1,1),(0,1),(0,0),(1,0) //North (x,y) Check
+    new int[]{5, 0, 3, 6 },//(1,0),(1,1),(0,1),(0,0) //Right (y,z) Check
+    new int[]{4, 5, 6, 7 },//(0,1),(1,1),(1,0),(0,0) //South (x,y) Check
+    new int[]{1, 4, 7, 2 },//(1,1),(1,0),(0,0),(0,1) //Left  (y,z) Check
+    new int[]{5, 4, 1, 0 },//(1,0),(0,0),(0,1),(1,1) //Top   (x,z) Check
+    new int[]{3, 2, 7, 6 },//(1,1),(0,1),(0,0),(1,0) //Bottom(x,z) Check
     };
 
     public static Vector3[] faceVertices(int dir, Vector3 pos)

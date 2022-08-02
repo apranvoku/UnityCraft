@@ -90,9 +90,27 @@ public class PlaceBlock : MonoBehaviour
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.blue, 0.5f);
                 if (hit.transform.gameObject.name != "Player")
                 {
-                    if (hit.transform.tag == "Voxel")
+                    if(hit.transform.name.ToLower().Contains("tnt"))
                     {
-                        VoxelRender.instance.DestroyCube(hit.triangleIndex);
+                        foreach(Transform t in SaveableBlocks.transform)
+                        {
+                            if((t.position - hit.transform.position).magnitude < 5f)
+                            {
+                                Destroy(t.gameObject);
+                            }
+                        }
+                        Destroy(hit.transform.gameObject);
+                    }
+                    else if (hit.transform.tag == "Voxel")
+                    {
+                        if(hit.transform.name == "VoxelMesh")
+                        {
+                            VoxelRender.instance.DestroyCube(hit.triangleIndex);
+                        }
+                        if(hit.transform.name == "GenerateTrees")
+                        {
+                            GenerateTrees.instance.DestroyCube(hit.triangleIndex);
+                        }
                     }
                     else
                     {
@@ -197,23 +215,23 @@ public class PlaceBlock : MonoBehaviour
 public void PlaceNewBlock(float x, float y, float z, string name)
     {
         //Debug.Log(x + " " + y + " " + z + " " + name);
-        if (name == "Plank")
+        if (name == "Block1")
         {
             Instantiate(Plank, new Vector3(x, y, z), Plank.transform.rotation, SaveableBlocks.transform);
         }
-        if (name == "Oak")
+        if (name == "Block2")
         {
             Instantiate(Oak, new Vector3(x, y, z), Oak.transform.rotation, SaveableBlocks.transform);
         }
-        if (name == "Glowstone")
+        if (name == "Block3")
         {
             Instantiate(Glowstone, new Vector3(x, y, z), Glowstone.transform.rotation, SaveableBlocks.transform);
         }
-        if (name == "Glass")
+        if (name == "Block4")
         {
             Instantiate(Glass, new Vector3(x, y, z), Glass.transform.rotation, SaveableBlocks.transform);
         }
-        if (name == "Dirt")
+        if (name == "Block5")
         {
             Instantiate(Dirt, new Vector3(x, y, z), Dirt.transform.rotation, SaveableBlocks.transform);
         }

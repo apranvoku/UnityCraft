@@ -1,11 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using Unity.AI.Navigation;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 
 public class VoxelRender : MonoBehaviour
 {
+    public int xSize;
+    public int zSize;
+
+    public GenerateTrees GT;
+    public NavMeshSurface surface;
     public static VoxelRender instance { get; private set; }
     public Mesh mesh;
     public List<Vector3> vertices;
@@ -25,27 +32,10 @@ public class VoxelRender : MonoBehaviour
 
     float y;
 
-#if UNITY_EDITOR
-    public bool initializeMesh = false;
 
-    //You can have multiple booleans here
-    private void OnValidate()
-    {
-        if (initializeMesh)
-        {
-            // Your function here
-            //StartCoroutine(Generation());
-            GenerateVoxelMesh(new VoxelData());
-            UpdateMesh();
-
-            //When its done set this bool to false
-            //This is useful if you want to do some stuff only when clicking this "button"
-            initializeMesh = false;
-        }
-    }
-#endif
     private void Awake()
     {
+        surface = GetComponent<NavMeshSurface>();
         // If there is an instance, and it's not me, delete myself.
         if (instance != null && instance != this)
         {
@@ -61,10 +51,33 @@ public class VoxelRender : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        GT = GameObject.Find("GenerateTrees").GetComponent<GenerateTrees>();
+        //xSize = 40;
+        //zSize = 40;
     }
 
-    void GenerateVoxelMesh(VoxelData data)
+#if UNITY_EDITOR
+    public bool initializeMesh = false;
+
+    //You can have multiple booleans here
+    private void OnValidate()
+    {
+        if (initializeMesh)
+        {
+            // Your function here
+            //StartCoroutine(Generation());
+            GenerateVoxelMesh();
+            UpdateMesh();
+            GT.UpdateMesh();
+
+
+            //When its done set this bool to false
+            //This is useful if you want to do some stuff only when clicking this "button"
+            initializeMesh = false;
+        }
+    }
+#endif
+    void GenerateVoxelMesh()
     {
         XRandOffset1 = Random.Range(-10000, 10000);
         ZRandOffset1 = Random.Range(-10000, 10000);
@@ -76,21 +89,23 @@ public class VoxelRender : MonoBehaviour
         uvs = new List<Vector2>();
         vertices = new List<Vector3>();
         triangles = new List<int>();
+        GT.ClearLists();
         //StartCoroutine(Generation());
-            for (int x = 0; x < 40; x++)
+            for (int x = 0; x < xSize; x++)
             {
-                for (int z = 0; z < 40; z++)
+                for (int z = 0; z < zSize; z++)
                 {
-                    y = ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 200f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
-                       + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 30f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
-                       + (highFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset2) / 4f, (z + ZRandOffset2) / 4f))) - 1))); // High Frequency
+                    y = ((lowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 100f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
+                       + (midFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 33f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
+                       + (highFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset2) / 8f, (z + ZRandOffset2) / 4f))) - 1))); // High Frequency
                     if (y > -lowFreqAmp)
                     {
                         MakeCube(new Vector3(x, (int)y + 100, z));
+                        if(Random.Range(1, 50) > 48)
+                        {
+                            GT.MakeTree(new Vector3(x-2, (int)y + 101, z-2));
+                        }
                         MakeCube(new Vector3(x, (int)y + 99, z));
-                        //MakeCube(new Vector3(x, (int)y + 98, z));
-                        //MakeCube(new Vector3(x, (int)y + 97, z));
-                        //MakeCube(new Vector3(x, (int)y + 96, z));
                         //Debug.Log("making cube at : " + x + " : "+ (int)y + " : " + z);
                         //Debug.Log("Perlin result: " + y);
                         //GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 102, z, "Dirt");
@@ -123,7 +138,7 @@ public class VoxelRender : MonoBehaviour
         }
     }
 
-    public void DestroyCube(int tIndex)//Wtf??
+    public void DestroyCube(int tIndex)
     {
         //Debug.Log(tIndex);
         int lowestNearestTriangle = tIndex - (tIndex % 12); //Get lowest triangle multiple of 36 E.G 82 - 82 % 36 = 72
@@ -219,6 +234,9 @@ public class VoxelRender : MonoBehaviour
         mesh.RecalculateNormals();
         GetComponent<MeshCollider>().sharedMesh = null;
         GetComponent<MeshCollider>().sharedMesh = transform.GetComponent<MeshFilter>().mesh;
+
+        surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
+        surface.BuildNavMesh();
     }
 
     public IEnumerator DelayedMakeCube(Vector3 pos)

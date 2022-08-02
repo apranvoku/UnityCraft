@@ -2,10 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VoxelData
+public class VoxelData : MonoBehaviour
 {
-    int[,] data = new int[,] { {1, 0, 0}, {0, 1, 0}, {0, 0, 1} };
-    
+    public int[,,] data;
+
+    public void Start()
+    {
+        data = new int[,,]
+    {
+        { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 1, 0, 0 },{ 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } },
+        { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 1, 0, 0 },{ 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } },
+        { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 }, { 0, 0, 1, 0, 0 },{ 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0 } },
+        { { 0, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 }, { 1, 1, 1, 1, 1 },{ 1, 1, 1, 1, 1 }, { 0, 1, 1, 1, 0 } },
+        { { 0, 0, 0, 0, 0 }, { 0, 0, 1, 1, 0 }, { 0, 1, 1, 1, 0 },{ 0, 0, 1, 1, 0 }, { 0, 0, 0, 0, 0 } },
+        { { 0, 0, 0, 0, 0 }, { 0, 0, 1, 0, 0 }, { 0, 1, 1, 1, 0 },{ 0, 0, 1, 0, 0 }, { 0, 0, 0, 0, 0 } }
+    };
+    }
     public int Width
     {
         get { return data.GetLength(0); }
@@ -16,8 +28,8 @@ public class VoxelData
         get { return data.GetLength(1); }
     }
 
-    public int GetCell(int x, int z)
+    public int GetCell(int x, int y, int z)
     {
-        return data[x, z];
+        return data[x, y, z];
     }
 }

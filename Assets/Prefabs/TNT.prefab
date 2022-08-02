@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6190819650316866015}
   - component: {fileID: 7847871755477076921}
   m_Layer: 0
-  m_Name: Dirt
+  m_Name: TNT
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8999676466967722699, guid: aec0c92aca6169a4a9a1286629ef39d8, type: 3}
+  - {fileID: 2100000, guid: 8ee87007747575e4291fdcf5d6161db3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
