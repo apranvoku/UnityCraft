@@ -8,12 +8,15 @@ public class PlayerController : MonoBehaviour
     public float speed;
     private GameObject Head;
     private Rigidbody rb;
+    public bool gravity_on;
     // Start is called before the first frame update
     void Start()
     {
+        gravity_on = true;
         Head = transform.GetChild(1).gameObject;
         Cursor.lockState = CursorLockMode.Locked;
         rb = transform.GetComponent<Rigidbody>();
+        rb.useGravity = true;
     }
 
     // Update is called once per frame
@@ -41,6 +44,19 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             rb.AddForce(transform.up * 300);
+        }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            gravity_on = !gravity_on;
+            if(gravity_on)
+            {
+                rb.useGravity = true;
+            }
+            else
+            {
+                rb.useGravity = false;
+                rb.velocity = Vector3.zero;
+            }
         }
         //transform.Rotate(-turn.y, turn.x, 0f);
         transform.localRotation = Quaternion.Euler(0f, turn.x, 0f);
