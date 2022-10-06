@@ -12,13 +12,18 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gravity_on = true;
-        Head = transform.GetChild(1).gameObject;
-        Cursor.lockState = CursorLockMode.Locked;
+        Head = GameObject.Find("Head");
         rb = transform.GetComponent<Rigidbody>();
-        rb.useGravity = true;
+        rb.useGravity = false;
+        gravity_on = true;
+        StartCoroutine(TurnOnGravity());
     }
 
+    public IEnumerator TurnOnGravity()
+    {
+        yield return new WaitForSeconds(5f);
+        rb.useGravity = true;
+    }
     // Update is called once per frame
     void Update()
     {

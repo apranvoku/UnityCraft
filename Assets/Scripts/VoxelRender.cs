@@ -66,9 +66,7 @@ public class VoxelRender : MonoBehaviour
         {
             // Your function here
             //StartCoroutine(Generation());
-            GenerateVoxelMesh();
-            UpdateMesh();
-            GT.UpdateMesh();
+            
 
 
             //When its done set this bool to false
@@ -77,7 +75,7 @@ public class VoxelRender : MonoBehaviour
         }
     }
 #endif
-    void GenerateVoxelMesh()
+    public void GenerateVoxelMesh()
     {
         XRandOffset1 = Random.Range(-10000, 10000);
         ZRandOffset1 = Random.Range(-10000, 10000);
@@ -114,6 +112,45 @@ public class VoxelRender : MonoBehaviour
 
                 }
             }
+    }
+
+    public void GenerateVoxelMesh(float customLowFreqAmp, float customMedFreqAmp, float customHighFreqAmp)
+    {
+        XRandOffset1 = Random.Range(-10000, 10000);
+        ZRandOffset1 = Random.Range(-10000, 10000);
+        XRandOffset2 = Random.Range(-10000, 10000);
+        ZRandOffset2 = Random.Range(-10000, 10000);
+        XRandOffset3 = Random.Range(-10000, 10000);
+        ZRandOffset3 = Random.Range(-10000, 10000);
+
+        uvs = new List<Vector2>();
+        vertices = new List<Vector3>();
+        triangles = new List<int>();
+        GT.ClearLists();
+        //StartCoroutine(Generation());
+        for (int x = 0; x < xSize; x++)
+        {
+            for (int z = 0; z < zSize; z++)
+            {
+                y = ((customLowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 100f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
+                   + (customMedFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset3) / 33f, (z + ZRandOffset3) / 30f))) - 1))  // Med Frequency
+                   + (customHighFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset2) / 8f, (z + ZRandOffset2) / 4f))) - 1))); // High Frequency
+                if (y > -lowFreqAmp)
+                {
+                    MakeCube(new Vector3(x, (int)y + 100, z));
+                    if (Random.Range(1, 50) > 48)
+                    {
+                        GT.MakeTree(new Vector3(x - 2, (int)y + 101, z - 2));
+                    }
+                    MakeCube(new Vector3(x, (int)y + 99, z));
+                    //Debug.Log("making cube at : " + x + " : "+ (int)y + " : " + z);
+                    //Debug.Log("Perlin result: " + y);
+                    //GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(x, (int)y - 102, z, "Dirt");
+                }
+
+
+            }
+        }
     }
     /*
     for (int z = 0; z < data.Depth; z++)
