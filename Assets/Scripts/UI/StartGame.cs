@@ -6,12 +6,15 @@ using UnityEngine.UI;
 using TMPro;
 public class StartGame : MonoBehaviour
 {
+    public GameObject voxelMesh;
+    public int x_size;
+    public int z_size;
     Button butt;
     private Quaternion light_rot;
+    public PlayerController playerController;
     public GameObject directionalLight;
     public GameObject CanvasMenu;
     public GameObject CanvasPersistent;
-    public VoxelRender voxelRender;
     public WorldSelect worldSelect;
     public SaveLoad SL;
     public TextMeshProUGUI saveInfo;
@@ -22,6 +25,9 @@ public class StartGame : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        x_size = 128;
+        z_size = 128;
+        playerController = GameObject.Find("Steve").GetComponent<PlayerController>();
         lowAmp = GameObject.Find("LowAmp").GetComponent<TMP_InputField>();
         medAmp = GameObject.Find("MedAmp").GetComponent<TMP_InputField>();
         highAmp = GameObject.Find("HighAmp").GetComponent<TMP_InputField>();
@@ -31,13 +37,11 @@ public class StartGame : MonoBehaviour
         directionalLight.transform.localRotation = Quaternion.Euler(new Vector3(-90f, 0f, 0f));
         CanvasMenu = GameObject.Find("CanvasMenu");
         CanvasPersistent = GameObject.Find("CanvasPersistent");
-        voxelRender = GameObject.Find("VoxelMesh").GetComponent<VoxelRender>();
         worldSelect = GameObject.Find("WorldSelect").GetComponent<WorldSelect>();
         SL = GetComponent<SaveLoad>();
         butt = GetComponent<Button>();
         butt.onClick.AddListener(StartGameFun);
         InitializeSaveDirectory();
-
     }
 
     // Update is called once per frame
@@ -67,16 +71,41 @@ public class StartGame : MonoBehaviour
     }
     void StartGameFun()
     {
+        Debug.Log("Generating...");
+        playerController.Gravity();
         directionalLight.transform.localRotation = light_rot;
+        directionalLight.GetComponent<DayNightCycle>().active = true;
         Cursor.lockState = CursorLockMode.Locked;
-        print(lowAmp.text);
-        print(medAmp.text);
-        print(highAmp.text);
         if (worldSelect.GetSelection() == 0)
         {
-            voxelRender.GenerateVoxelMesh();
-            voxelRender.UpdateMesh();
-            voxelRender.GT.UpdateMesh();
+            if(lowAmp.text == "")
+                lowAmp.text = "30";
+            if (medAmp.text == "")
+                medAmp.text = "10";
+            if (highAmp.text == "")
+                highAmp.text = "1";
+
+            float rand1 = Random.Range(-10000, 10000);
+            float rand2 = Random.Range(-10000, 10000);
+            float rand3 = Random.Range(-10000, 10000);
+            float rand4 = Random.Range(-10000, 10000);
+            float rand5 = Random.Range(-10000, 10000);
+            float rand6 = Random.Range(-10000, 10000);
+
+            for (int x = 0; x < x_size; x+= 31)
+            {
+                for(int z = 0; z < z_size; z+= 31)
+                {
+                    VoxelRender render = Instantiate(voxelMesh).GetComponent<VoxelRender>();
+                    render.GenerateVoxelMesh(float.Parse(lowAmp.text), float.Parse(medAmp.text), float.Parse(highAmp.text), x, z,
+                        rand1, rand2, rand3, rand4, rand5, rand6);
+                    render.UpdateMesh();
+                    render.GT.UpdateMesh();
+                }
+            }
+            //voxelRender.GenerateVoxelMesh(float.Parse(lowAmp.text), float.Parse(medAmp.text), float.Parse(highAmp.text));
+            //voxelRender.UpdateMesh();
+            //voxelRender.GT.UpdateMesh();
             int ID = 0;
             string path = Application.persistentDataPath + "/saves";
             foreach (string file in System.IO.Directory.GetFiles(path))

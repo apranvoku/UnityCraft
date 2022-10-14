@@ -16,12 +16,15 @@ public class PlayerController : MonoBehaviour
         rb = transform.GetComponent<Rigidbody>();
         rb.useGravity = false;
         gravity_on = true;
-        StartCoroutine(TurnOnGravity());
     }
 
+    public void Gravity()
+    {
+        StartCoroutine(TurnOnGravity());
+    }    
     public IEnumerator TurnOnGravity()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(2f);
         rb.useGravity = true;
     }
     // Update is called once per frame
@@ -32,19 +35,19 @@ public class PlayerController : MonoBehaviour
         //transform.position += new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         if (Input.GetKey(KeyCode.W))
         {
-            rb.MovePosition(transform.position += transform.forward/20f);
+            rb.MovePosition(transform.position += transform.forward/10f);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            rb.MovePosition(transform.position -= transform.right / 20f);
+            rb.MovePosition(transform.position -= transform.right / 10f);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            rb.MovePosition(transform.position -= transform.forward / 20f);
+            rb.MovePosition(transform.position -= transform.forward / 10f);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            rb.MovePosition(transform.position += transform.right / 20f);
+            rb.MovePosition(transform.position += transform.right / 10f);
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {

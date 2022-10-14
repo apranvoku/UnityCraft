@@ -51,7 +51,7 @@ public class PlaceBlock : MonoBehaviour
             {
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow, 0.1f);
                 //Vector3 nearestPoint = GetApproximateCornerVertex(hit.point, hit.transform.GetComponent<MeshFilter>().mesh, hit.normal);
-                Vector3 nearestPoint = GetApproximateCornerVertexTriangle(hit.triangleIndex, hit.normal);
+                Vector3 nearestPoint = GetApproximateCornerVertexTriangle(hit.triangleIndex, hit.normal, hit.transform.gameObject.GetComponent<VoxelRender>());
                 Debug.DrawLine(nearestPoint, nearestPoint + hit.normal, Color.red, 5f);
                 /*VoxelRender.instance.MakeCube(nearestPoint);//Add cube to mesh
                 VoxelRender.instance.UpdateMesh();*/ //
@@ -90,22 +90,11 @@ public class PlaceBlock : MonoBehaviour
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.blue, 0.5f);
                 if (hit.transform.gameObject.name != "Player")
                 {
-                    if(hit.transform.name.ToLower().Contains("tnt"))
+                    if (hit.transform.tag == "Voxel")
                     {
-                        foreach(Transform t in SaveableBlocks.transform)
+                        if(hit.transform.name.Contains("VoxelMesh"))
                         {
-                            if((t.position - hit.transform.position).magnitude < 5f)
-                            {
-                                Destroy(t.gameObject);
-                            }
-                        }
-                        Destroy(hit.transform.gameObject);
-                    }
-                    else if (hit.transform.tag == "Voxel")
-                    {
-                        if(hit.transform.name == "VoxelMesh")
-                        {
-                            VoxelRender.instance.DestroyCube(hit.triangleIndex);
+                            hit.transform.GetComponent<VoxelRender>().DestroyCube(hit.triangleIndex);
                         }
                         if(hit.transform.name == "GenerateTrees")
                         {
@@ -120,20 +109,20 @@ public class PlaceBlock : MonoBehaviour
             }
         }
     }
-    public Vector3 GetApproximateCornerVertexTriangle(int tindex, Vector3 normal)
+    public Vector3 GetApproximateCornerVertexTriangle(int tindex, Vector3 normal, VoxelRender vr)
     {
         List<Vector3> tpoints = new List<Vector3>();
         if (tindex % 2 == 0)//Even
         {
-            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4]);
-            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4 + 1]);
-            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4 + 2]);
+            tpoints.Add(vr.vertices[(tindex / 2) * 4]);
+            tpoints.Add(vr.vertices[(tindex / 2) * 4 + 1]);
+            tpoints.Add(vr.vertices[(tindex / 2) * 4 + 2]);
         }
         else//Odd
         {
-            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4]);
-            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4 + 2]);
-            tpoints.Add(VoxelRender.instance.vertices[(tindex / 2) * 4 + 3]);
+            tpoints.Add(vr.vertices[(tindex / 2) * 4]);
+            tpoints.Add(vr.vertices[(tindex / 2) * 4 + 2]);
+            tpoints.Add(vr.vertices[(tindex / 2) * 4 + 3]);
         }
         float x = 0; float y = 0; float z = 0;
         for (int j = 0; j < tpoints.Count; j++)

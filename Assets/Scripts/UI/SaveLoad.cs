@@ -50,9 +50,9 @@ public class SaveLoad : MonoBehaviour
                 float.Parse(sArray[1]) - 1f,
                 float.Parse(sArray[2]) - 1f);
 
-            VoxelRender.instance.MakeCube(result);
+            //VoxelRender.instance.MakeCube(result);
         }
-        VoxelRender.instance.UpdateMesh();
+        //VoxelRender.instance.UpdateMesh();
     }
 
     public void SaveWorld()
@@ -70,11 +70,11 @@ public class SaveLoad : MonoBehaviour
         File.WriteAllText(dir1, buildString); //UNCOMMENT THIS LINE TO SAVE
 
         string dir2 = Application.persistentDataPath + "/saves/" + SaveID + "_mesh";
-        for (int v = 0; v < VoxelRender.instance.vertices.Count; v += 24)
-        {
-            buildString += new string(VoxelRender.instance.vertices[v].ToString());
-            buildString += "\n";
-        }
+        //for (int v = 0; v < VoxelRender.instance.vertices.Count; v += 24)
+        //{
+        //    buildString += new string(VoxelRender.instance.vertices[v].ToString());
+        //    buildString += "\n";
+        //}
         File.WriteAllText(dir2, buildString); //UNCOMMENT THIS LINE TO SAVE
     }
 }

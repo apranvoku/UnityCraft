@@ -6,7 +6,6 @@ public class GenerateTrees : MonoBehaviour
 {
     public int numTrees;
     public VoxelData vd;
-    public VoxelRender vr;
     int layerMask;
 
     public static GenerateTrees instance { get; private set; }
@@ -42,7 +41,7 @@ public class GenerateTrees : MonoBehaviour
         
     }
 
-    public void GenTrees()
+    /*public void GenTrees() *** DEPRECATED ***
     {
         uvs = new List<Vector2>();
         vertices = new List<Vector3>();
@@ -60,7 +59,7 @@ public class GenerateTrees : MonoBehaviour
             }
         }
         UpdateMesh();
-    }
+    }*/
 
     public void ClearLists()
     {

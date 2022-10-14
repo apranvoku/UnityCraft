@@ -8,12 +8,9 @@ public class EarthGen : MonoBehaviour
     public float midFreqAmp  = 6f;
     public float highFreqAmp = 1f;
 
-    float inc;
     // Start is called before the first frame update
     void Start()
     {
-
-        inc=0.5f;
         float y;
         
         float XRandOffset1 = Random.Range(-10000, 10000);

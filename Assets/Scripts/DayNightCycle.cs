@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class DayNightCycle : MonoBehaviour
 {
+    public bool active;
     // Start is called before the first frame update
     void Start()
     {
-        
+        active = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.Rotate(new Vector3(1/60f, 0f, 0f));
+        if(active)
+            transform.Rotate(new Vector3(1/60f, 0f, 0f));
     }
 }
