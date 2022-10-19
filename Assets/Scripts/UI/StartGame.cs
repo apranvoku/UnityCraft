@@ -21,6 +21,7 @@ public class StartGame : MonoBehaviour
     public TMP_InputField lowAmp;
     public TMP_InputField medAmp;
     public TMP_InputField highAmp;
+    public Toggle TreesOn;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +29,7 @@ public class StartGame : MonoBehaviour
         x_size = 128;
         z_size = 128;
         playerController = GameObject.Find("Steve").GetComponent<PlayerController>();
+        TreesOn = GameObject.Find("ToggleTrees").GetComponent<Toggle>();
         lowAmp = GameObject.Find("LowAmp").GetComponent<TMP_InputField>();
         medAmp = GameObject.Find("MedAmp").GetComponent<TMP_InputField>();
         highAmp = GameObject.Find("HighAmp").GetComponent<TMP_InputField>();
@@ -93,13 +95,19 @@ public class StartGame : MonoBehaviour
             float rand6 = Random.Range(-10000, 10000);
 
             GenerateTrees.instance.ClearLists();
+            int TreeDensity = 0;
+            if(TreesOn.isOn)
+            {
+                TreeDensity = 15;
+            }
+
             for (int x = 0; x < x_size; x+= 31)
             {
                 for(int z = 0; z < z_size; z+= 31)
                 {
                     VoxelRender render = Instantiate(voxelMesh, GameObject.Find("VoxelMeshParent").transform).GetComponent<VoxelRender>();
                     render.GenerateVoxelMesh(float.Parse(lowAmp.text), float.Parse(medAmp.text), float.Parse(highAmp.text), x, z,
-                        rand1, rand2, rand3, rand4, rand5, rand6, 20);
+                        rand1, rand2, rand3, rand4, rand5, rand6, TreeDensity);
                     render.UpdateMesh();
                 }
             }
