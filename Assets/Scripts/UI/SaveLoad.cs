@@ -6,8 +6,7 @@ using System.IO;
 
 public class SaveLoad : MonoBehaviour
 {
-    static string buildString;
-    static string[] readString;
+    public GameObject voxelMesh;
     public string SaveID;
 
     void Start()
@@ -20,18 +19,55 @@ public class SaveLoad : MonoBehaviour
     }
     public void LoadSave()
     {
-        string dir1 = Application.persistentDataPath + "/saves/" + SaveID + "_block";
-        readString = File.ReadAllLines(dir1);
+        string meshdir = Application.persistentDataPath + "/saves/" + SaveID + "/mesh";
+        string treedir = Application.persistentDataPath + "/saves/" + SaveID + "/trees";
+        string blockdir = Application.persistentDataPath + "/saves/" + SaveID + "/gameobjects";
+
+        string[] readString = File.ReadAllLines(blockdir + "/go.txt");
         foreach (string shortString in readString)
         {
-            //Debug.Log(shortString);
             string[] splitString = shortString.Split(":");//index 0 - 2 is position, 3 is name.
             GameObject.Find("Head").transform.GetComponent<PlaceBlock>().PlaceNewBlock(float.Parse(splitString[0]), float.Parse(splitString[1]), float.Parse(splitString[2]), splitString[3]);
             //Debug.Log("Here");
         }
-        string dir2 = Application.persistentDataPath + "/saves/" + SaveID + "_mesh";
-        readString = File.ReadAllLines(dir2);
-        foreach (string shortString in readString)
+
+        int chunkID = 0;
+        foreach (string chunk in System.IO.Directory.GetFiles(meshdir))
+        {
+            VoxelRender render = Instantiate(voxelMesh, GameObject.Find("VoxelMeshParent").transform).GetComponent<VoxelRender>();
+            string chunkPath = meshdir + "/chunk" + chunkID.ToString();
+            string[] meshStringList = File.ReadAllLines(chunkPath);
+            foreach (string shortString in meshStringList)
+            {
+                string sVector = "";
+                // Remove the parentheses
+                if (shortString.StartsWith("(") && shortString.EndsWith(")"))
+                {
+                    sVector = shortString.Substring(1, shortString.Length - 2);
+                }
+
+                // split the items
+                string[] sArray = sVector.Split(',');
+                //Debug.Log(sArray.ToString());
+
+                // store as a Vector3
+                Vector3 result = new Vector3(
+                    float.Parse(sArray[0]) - 1f,
+                    float.Parse(sArray[1]) - 1f,
+                    float.Parse(sArray[2]) - 1f);
+
+
+                render.MakeCube(result);
+                //VoxelRender.instance.MakeCube(result);
+            }
+            render.UpdateMesh();
+            //VoxelRender.instance.UpdateMesh();
+            chunkID++;
+        }
+
+        string treePath = treedir + "/tree";
+        string[] treeStringList = File.ReadAllLines(treePath);
+        foreach (string shortString in treeStringList)
         {
             string sVector = "";
             // Remove the parentheses
@@ -50,31 +86,54 @@ public class SaveLoad : MonoBehaviour
                 float.Parse(sArray[1]) - 1f,
                 float.Parse(sArray[2]) - 1f);
 
+            GenerateTrees.instance.MakeTree(result);
+            GenerateTrees.instance.UpdateMesh();
             //VoxelRender.instance.MakeCube(result);
         }
-        //VoxelRender.instance.UpdateMesh();
     }
 
     public void SaveWorld()
     {
-        string dir1 = Application.persistentDataPath + "/saves/" + SaveID + "_block";
-        Debug.Log("Saving saveables to " + Application.persistentDataPath);
-        Transform Saveables = GameObject.Find("SaveableBlocks").transform;
+        string meshdir = Application.persistentDataPath + "/saves/" + SaveID + "/mesh";
+        string treedir = Application.persistentDataPath + "/saves/" + SaveID + "/trees";
+        string blockdir = Application.persistentDataPath + "/saves/" + SaveID + "/gameobjects";
 
-        foreach (Transform child in Saveables)
+        string mesh_string = string.Empty;
+        string tree_string = string.Empty;
+        string go_string = string.Empty;
+
+        Debug.Log("Saving saveables to " + Application.persistentDataPath);
+        Transform gameObjects = GameObject.Find("SaveableBlocks").transform;
+        Transform chunks = GameObject.Find("VoxelMeshParent").transform;
+
+        
+        foreach (Transform child in gameObjects)
         {
-            buildString += new string(child.transform.position.x + ":" + child.transform.position.y + ":" + child.transform.position.z + ":" + child.transform.name.Split("(")[0]);
-            buildString += "\n";
+            go_string += new string(child.transform.position.x + ":" + child.transform.position.y + ":" + child.transform.position.z + ":" + child.transform.name.Split("(")[0]);
+            go_string += "\n";
             //Debug.Log(buildString);
         }
-        File.WriteAllText(dir1, buildString); //UNCOMMENT THIS LINE TO SAVE
+        File.WriteAllText(blockdir + "/go.txt", go_string); //UNCOMMENT THIS LINE TO SAVE
 
-        string dir2 = Application.persistentDataPath + "/saves/" + SaveID + "_mesh";
-        //for (int v = 0; v < VoxelRender.instance.vertices.Count; v += 24)
-        //{
-        //    buildString += new string(VoxelRender.instance.vertices[v].ToString());
-        //    buildString += "\n";
-        //}
-        File.WriteAllText(dir2, buildString); //UNCOMMENT THIS LINE TO SAVE
+        int chunkID = 0;
+        foreach (Transform child in chunks)
+        {
+            mesh_string = string.Empty;
+            VoxelRender chunk = child.GetComponent<VoxelRender>();
+            for (int v = 0; v < chunk.vertices.Count; v += 24)
+            {
+                mesh_string += new string(chunk.vertices[v].ToString());
+                mesh_string += "\n";
+            }
+            File.WriteAllText(meshdir + "/chunk" + chunkID.ToString(), mesh_string);//UNCOMMENT THIS LINE TO SAVE
+            chunkID++;
+        }
+
+        for (int i = 0; i < GenerateTrees.instance.TreeSpawns.Count; i++)
+        {
+            tree_string += GenerateTrees.instance.TreeSpawns[i].ToString();
+            tree_string += "\n";
+        }
+        File.WriteAllText(treedir + "/tree", tree_string);//UNCOMMENT THIS LINE TO SAVE
     }
 }

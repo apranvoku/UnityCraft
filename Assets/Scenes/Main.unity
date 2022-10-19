@@ -257,7 +257,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 280.1, y: -79.6}
+  m_AnchoredPosition: {x: 280.1, y: -56.8}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &226254118
@@ -280,7 +280,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Enter Custom Amplitudes for Terrain Generation
+  m_text: Enter Terrain Gen Seeds
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -343,7 +343,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -172.69165, w: 27.038269}
+  m_margin: {x: 0, y: 0, z: -170.83, w: 27.038269}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -366,7 +366,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 260712695}
-  - component: {fileID: 260712696}
   m_Layer: 0
   m_Name: StableParent
   m_TagString: Untagged
@@ -391,21 +390,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &260712696
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 260712694}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 146db9b15f7ab1e478904d6d8c8d6b98, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lowFreqAmp: 40
-  midFreqAmp: 20
-  highFreqAmp: 1
 --- !u!1 &350059738
 GameObject:
   m_ObjectHideFlags: 0
@@ -1182,9 +1166,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86bd2ac334e3a1844952ff4848caaf1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Plank: {fileID: 3352664618896243831, guid: 76645a3a3d88a3c4c952b89cf092988e, type: 3}
-  Oak: {fileID: 3352664618896243831, guid: 165710e3f6a1b894186de9fdfd16f388, type: 3}
-  Glowstone: {fileID: 3352664618896243831, guid: 20415c1ee37234340874ae329fb6c8c4, type: 3}
+  Plank: {fileID: 970748656764367606, guid: cc0d961aa55568c4988bc7f0c68c7174, type: 3}
+  Oak: {fileID: 5318420263599601125, guid: 4cc3abc262aadeb4db72259f3df4726a, type: 3}
+  Glowstone: {fileID: 3352664618896243831, guid: f75a50b00411e634eb48b9849b7f3caf, type: 3}
   Glass: {fileID: 3352664618896243831, guid: cda49e747faadd5429fe416d4a162095, type: 3}
   Dirt: {fileID: 3352664618896243831, guid: 736e43ca35f37d2499f50df739046233, type: 3}
   Blocks: []
@@ -1793,7 +1777,7 @@ GameObject:
   - component: {fileID: 954481451}
   - component: {fileID: 954481450}
   m_Layer: 5
-  m_Name: Grass
+  m_Name: Glowstone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3485,6 +3469,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: daa3be4a0a8a13143bad2ce54f31af83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  voxelMesh: {fileID: 7152812469355534768, guid: 421dcf3e51d11e24585b56f966a2b5ff, type: 3}
   SaveID: 
 --- !u!114 &7680335838195625580
 MonoBehaviour:
@@ -4113,7 +4098,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -439, y: 283}
+  m_AnchoredPosition: {x: -350, y: 250}
   m_SizeDelta: {x: 250, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7680335838586263542

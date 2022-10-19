@@ -10,6 +10,7 @@ public class GenerateTrees : MonoBehaviour
 
     public static GenerateTrees instance { get; private set; }
     public Mesh mesh;
+    public List<Vector3> TreeSpawns;
     public List<Vector3> vertices;
     public List<int> triangles;
     public List<Vector2> uvs;
@@ -30,9 +31,7 @@ public class GenerateTrees : MonoBehaviour
 
     void Start()
     {
-        numTrees = 10;
-        layerMask = 1 << 2;
-        layerMask = ~layerMask;
+        ClearLists();
     }
 
     // Update is called once per frame
@@ -63,6 +62,7 @@ public class GenerateTrees : MonoBehaviour
 
     public void ClearLists()
     {
+        TreeSpawns = new List<Vector3>();
         uvs = new List<Vector2>();
         vertices = new List<Vector3>();
         triangles = new List<int>();
@@ -70,6 +70,7 @@ public class GenerateTrees : MonoBehaviour
 
     public void MakeTree(Vector3 offset)
     {
+        TreeSpawns.Add(offset);
         bool isLeaf = false;
         for (int x = 0; x < 5; x++)
         {

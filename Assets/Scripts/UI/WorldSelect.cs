@@ -17,20 +17,17 @@ public class WorldSelect : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void UpdateDropDown()
     {
         int ID = 0;
         string path = Application.persistentDataPath + "/saves";
-        foreach (string file in System.IO.Directory.GetFiles(path))
+        foreach (string directory in System.IO.Directory.GetDirectories(path))
         {
-            if(file.EndsWith("block"))
-            {
-                dd.AddOptions(new List<string> { "World: " + ID });
-                ID++;
-            }
+            dd.AddOptions(new List<string> { "World: " + ID });
+            ID++;
         }
     }
 

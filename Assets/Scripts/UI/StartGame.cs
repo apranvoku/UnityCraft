@@ -107,11 +107,27 @@ public class StartGame : MonoBehaviour
 
             int ID = 0;
             string path = Application.persistentDataPath + "/saves";
-            foreach (string file in System.IO.Directory.GetFiles(path))
+            foreach (string folder in System.IO.Directory.GetDirectories(path))
             {
-                ID += 2;
+                ID += 1;
             }
-            SL.SetSaveID("world_" + (ID/2).ToString());
+            string FolderName = "world_" + ID.ToString();
+            Debug.Log(FolderName);
+            while (Directory.Exists(Application.persistentDataPath + "/saves/" + FolderName)) //Make sure that if a save already exists with the same name, a unique save is created.
+            {
+                ID += 1;
+                FolderName = "world_" + ID.ToString();
+            }
+            if (!Directory.Exists(Application.persistentDataPath + "/saves/" + FolderName))
+            {
+                //if save folder doesn't exist, create it
+                Directory.CreateDirectory(Application.persistentDataPath + "/saves/" + FolderName);
+                Directory.CreateDirectory(Application.persistentDataPath + "/saves/" + FolderName + "/mesh");
+                Directory.CreateDirectory(Application.persistentDataPath + "/saves/" + FolderName + "/trees");
+                Directory.CreateDirectory(Application.persistentDataPath + "/saves/" + FolderName + "/gameobjects");
+            }
+            SL.SetSaveID(FolderName);
+            SL.SaveWorld();
         }
         else
         {
