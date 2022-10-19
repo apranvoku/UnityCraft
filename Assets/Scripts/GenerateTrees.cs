@@ -10,7 +10,7 @@ public class GenerateTrees : MonoBehaviour
 
     public static GenerateTrees instance { get; private set; }
     public Mesh mesh;
-    public List<Vector3> TreeSpawns;
+    public Dictionary<Vector3, bool> TreePos;
     public List<Vector3> vertices;
     public List<int> triangles;
     public List<Vector2> uvs;
@@ -62,7 +62,7 @@ public class GenerateTrees : MonoBehaviour
 
     public void ClearLists()
     {
-        TreeSpawns = new List<Vector3>();
+        TreePos = new Dictionary<Vector3, bool>();
         uvs = new List<Vector2>();
         vertices = new List<Vector3>();
         triangles = new List<int>();
@@ -70,21 +70,29 @@ public class GenerateTrees : MonoBehaviour
 
     public void MakeTree(Vector3 offset)
     {
-        TreeSpawns.Add(offset);
-        bool isLeaf = false;
+
+        bool isLeaf;
         for (int x = 0; x < 5; x++)
         {
-            for (int y = 0; y < 5; y++)
+            for (int y = 0; y < 6; y++)
             {
                 for (int z = 0; z < 5; z++)
                 {
-                    if (vd.GetCell(x, y, z) == 1)
+                    if (vd.data[x, y, z] == 1)
                     {
-                        if (x >= 3)
+                        if(!TreePos.ContainsKey(offset + new Vector3(x, y, z)))
                         {
-                            isLeaf = true;
+                            if (y >= 3)
+                            {
+                                isLeaf = true;
+                            }
+                            else
+                            {
+                                isLeaf = false;
+                            }
+                            TreePos.Add(offset + new Vector3(x, y, z), isLeaf);
+                            MakeCube(offset + new Vector3(x,y,z), isLeaf);
                         }
-                        MakeCube(new Vector3(y + offset.x, x + offset.y, z + offset.z), isLeaf);
                     }
                 }
             }
@@ -92,6 +100,10 @@ public class GenerateTrees : MonoBehaviour
     }
     public void MakeCube(Vector3 cubePos, bool isLeaf)
     {
+        if (!TreePos.ContainsKey(cubePos))
+        {
+            TreePos.Add(cubePos, isLeaf);
+        }
         for (int i = 0; i < 6; i++)
         {
             MakeFace(i, cubePos);
@@ -199,7 +211,6 @@ public class GenerateTrees : MonoBehaviour
     {
         //Debug.Log("Making face" + dir + "at face pos" + facePos);
         vertices.AddRange(CubeMeshData.faceVertices(dir, facePos));
-
         int vcount = vertices.Count;
 
         triangles.Add(vcount - 4);
@@ -221,7 +232,7 @@ public class GenerateTrees : MonoBehaviour
         GetComponent<MeshCollider>().sharedMesh = null;
         GetComponent<MeshCollider>().sharedMesh = transform.GetComponent<MeshFilter>().mesh;
     }
-    public void DestroyCube(int tIndex)
+    public void DestroyCube(int tIndex, Vector3 cubePos)
     {
         //Debug.Log(tIndex);
         int lowestNearestTriangle = tIndex - (tIndex % 12); //Get lowest triangle multiple of 36 E.G 82 - 82 % 36 = 72
@@ -237,6 +248,7 @@ public class GenerateTrees : MonoBehaviour
             vertices[i] = Vector3.zero;
             uvs[i] = Vector2.zero;
         }
+        TreePos.Remove(cubePos);
 
         UpdateMesh();
     }

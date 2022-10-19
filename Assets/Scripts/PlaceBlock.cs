@@ -107,7 +107,17 @@ public class PlaceBlock : MonoBehaviour
                         }
                         if(hit.transform.name == "GenerateTrees")
                         {
-                            GenerateTrees.instance.DestroyCube(hit.triangleIndex);
+                            Vector3 deletedPos;
+                            //if (hit.normal.x < 0 || hit.normal.y < 0 || hit.normal.z < 0)
+                            //{
+                            //    deletedPos = new Vector3((int)hit.point.x - hit.normal.x, (int)hit.point.y - hit.normal.y, (int)hit.point.z - hit.normal.z);
+                            //}
+                            //else
+                            //{
+                                deletedPos = new Vector3((int)hit.point.x +1, (int)hit.point.y+1, (int)hit.point.z+1);
+                            //}
+                            Debug.Log("hit position plus hit normal is " + deletedPos.ToString());
+                            GenerateTrees.instance.DestroyCube(hit.triangleIndex, deletedPos);
                         }
                     }
                     else

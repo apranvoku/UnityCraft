@@ -26,8 +26,8 @@ public class StartGame : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        x_size = 128;
-        z_size = 128;
+        x_size = 32;
+        z_size = 32;
         playerController = GameObject.Find("Steve").GetComponent<PlayerController>();
         TreesOn = GameObject.Find("ToggleTrees").GetComponent<Toggle>();
         lowAmp = GameObject.Find("LowAmp").GetComponent<TMP_InputField>();
@@ -63,6 +63,20 @@ public class StartGame : MonoBehaviour
         saveInfo.text = "Press r to save...";
     }
 
+    public void SetSteveStart()
+    {
+        RaycastHit hit;
+        int x_mid = x_size/2;
+        int z_mid = z_size/2;
+        Vector3 start = new Vector3(x_mid, 1000f, z_mid);
+        if (Physics.Raycast(start, Vector3.up * -1f, out hit, Mathf.Infinity))
+        {
+            Debug.DrawLine(start, start - new Vector3(start.x, start.y - 1000f, start.z), Color.green, 15f);
+            GameObject.Find("Steve").transform.position = new Vector3((int)hit.point.x, (int)hit.point.y+10, (int)hit.point.z);
+        }
+
+    }
+
     private void InitializeSaveDirectory()
     {
         if (!Directory.Exists(Application.persistentDataPath + "/saves"))
@@ -94,16 +108,16 @@ public class StartGame : MonoBehaviour
             float rand5 = Random.Range(-10000, 10000);
             float rand6 = Random.Range(-10000, 10000);
 
-            GenerateTrees.instance.ClearLists();
+            GenerateTrees.instance.ClearLists(); 
             int TreeDensity = 0;
             if(TreesOn.isOn)
             {
                 TreeDensity = 15;
             }
 
-            for (int x = 0; x < x_size; x+= 31)
+            for (int x = 0; x < x_size; x+= 32)
             {
-                for(int z = 0; z < z_size; z+= 31)
+                for(int z = 0; z < z_size; z+= 32)
                 {
                     VoxelRender render = Instantiate(voxelMesh, GameObject.Find("VoxelMeshParent").transform).GetComponent<VoxelRender>();
                     render.GenerateVoxelMesh(float.Parse(lowAmp.text), float.Parse(medAmp.text), float.Parse(highAmp.text), x, z,
@@ -144,5 +158,6 @@ public class StartGame : MonoBehaviour
         }
         CanvasMenu.GetComponent<Canvas>().enabled = false;
         CanvasPersistent.GetComponent<Canvas>().enabled = true;
+        SetSteveStart();
     }
 }

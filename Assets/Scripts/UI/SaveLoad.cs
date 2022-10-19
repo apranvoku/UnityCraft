@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System;
 
 public class SaveLoad : MonoBehaviour
 {
@@ -67,13 +68,16 @@ public class SaveLoad : MonoBehaviour
 
         string treePath = treedir + "/tree";
         string[] treeStringList = File.ReadAllLines(treePath);
-        foreach (string shortString in treeStringList)
+        foreach (string keyVal in treeStringList)
         {
+            string[] pairList = keyVal.Split(":");
+            string positionString = pairList[0];
+            string isLeafString = pairList[1];
             string sVector = "";
             // Remove the parentheses
-            if (shortString.StartsWith("(") && shortString.EndsWith(")"))
+            if (positionString.StartsWith("(") && positionString.EndsWith(")"))
             {
-                sVector = shortString.Substring(1, shortString.Length - 2);
+                sVector = positionString.Substring(1, positionString.Length - 2);
             }
 
             // split the items
@@ -86,10 +90,12 @@ public class SaveLoad : MonoBehaviour
                 float.Parse(sArray[1]) - 1f,
                 float.Parse(sArray[2]) - 1f);
 
-            GenerateTrees.instance.MakeTree(result);
-            GenerateTrees.instance.UpdateMesh();
+            bool isLeaf = Boolean.Parse(isLeafString);
+            GenerateTrees.instance.MakeCube(result, isLeaf);
+            
             //VoxelRender.instance.MakeCube(result);
         }
+        GenerateTrees.instance.UpdateMesh();
     }
 
     public void SaveWorld()
@@ -129,9 +135,9 @@ public class SaveLoad : MonoBehaviour
             chunkID++;
         }
 
-        for (int i = 0; i < GenerateTrees.instance.TreeSpawns.Count; i++)
+        foreach (var pair in GenerateTrees.instance.TreePos)
         {
-            tree_string += GenerateTrees.instance.TreeSpawns[i].ToString();
+            tree_string += pair.Key.ToString() + ":" + pair.Value.ToString();
             tree_string += "\n";
         }
         File.WriteAllText(treedir + "/tree", tree_string);//UNCOMMENT THIS LINE TO SAVE
