@@ -92,20 +92,19 @@ public class StartGame : MonoBehaviour
             float rand5 = Random.Range(-10000, 10000);
             float rand6 = Random.Range(-10000, 10000);
 
+            GenerateTrees.instance.ClearLists();
             for (int x = 0; x < x_size; x+= 31)
             {
                 for(int z = 0; z < z_size; z+= 31)
                 {
-                    VoxelRender render = Instantiate(voxelMesh).GetComponent<VoxelRender>();
+                    VoxelRender render = Instantiate(voxelMesh, GameObject.Find("VoxelMeshParent").transform).GetComponent<VoxelRender>();
                     render.GenerateVoxelMesh(float.Parse(lowAmp.text), float.Parse(medAmp.text), float.Parse(highAmp.text), x, z,
-                        rand1, rand2, rand3, rand4, rand5, rand6);
+                        rand1, rand2, rand3, rand4, rand5, rand6, 20);
                     render.UpdateMesh();
-                    render.GT.UpdateMesh();
                 }
             }
-            //voxelRender.GenerateVoxelMesh(float.Parse(lowAmp.text), float.Parse(medAmp.text), float.Parse(highAmp.text));
-            //voxelRender.UpdateMesh();
-            //voxelRender.GT.UpdateMesh();
+            GenerateTrees.instance.UpdateMesh();
+
             int ID = 0;
             string path = Application.persistentDataPath + "/saves";
             foreach (string file in System.IO.Directory.GetFiles(path))

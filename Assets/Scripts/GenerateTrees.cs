@@ -38,7 +38,7 @@ public class GenerateTrees : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     /*public void GenTrees() *** DEPRECATED ***
@@ -68,27 +68,27 @@ public class GenerateTrees : MonoBehaviour
         triangles = new List<int>();
     }
 
-        public void MakeTree(Vector3 offset)
-        {
+    public void MakeTree(Vector3 offset)
+    {
         bool isLeaf = false;
-            for (int x = 0; x < 5; x++)
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < 5; y++)
             {
-                for (int y = 0; y < 5; y++)
+                for (int z = 0; z < 5; z++)
                 {
-                    for (int z = 0; z < 5; z++)
+                    if (vd.GetCell(x, y, z) == 1)
                     {
-                        if (vd.GetCell(x, y, z) == 1)
+                        if (x >= 3)
                         {
-                            if(x >=3)
-                            {
-                                isLeaf = true;
-                            }
-                            MakeCube(new Vector3(y + offset.x, x + offset.y, z + offset.z), isLeaf);
+                            isLeaf = true;
                         }
+                        MakeCube(new Vector3(y + offset.x, x + offset.y, z + offset.z), isLeaf);
                     }
                 }
             }
         }
+    }
     public void MakeCube(Vector3 cubePos, bool isLeaf)
     {
         for (int i = 0; i < 6; i++)
@@ -101,7 +101,7 @@ public class GenerateTrees : MonoBehaviour
 
     void AssignUVs(int dir, bool isLeaf)
     {
-        if(isLeaf)
+        if (isLeaf)
         {
             switch (dir)
             {
@@ -191,7 +191,7 @@ public class GenerateTrees : MonoBehaviour
                     break;
             }
         }
-        
+
     }
 
     void MakeFace(int dir, Vector3 facePos)

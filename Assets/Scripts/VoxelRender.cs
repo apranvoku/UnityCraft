@@ -8,7 +8,6 @@ using Unity.AI.Navigation;
 
 public class VoxelRender : MonoBehaviour
 {
-    public GenerateTrees GT;
     public NavMeshSurface surface;
     public MeshCollider mc;
     public MeshFilter mf;
@@ -29,7 +28,6 @@ public class VoxelRender : MonoBehaviour
     {
         surface = GetComponent<NavMeshSurface>();
         mesh = GetComponent<MeshFilter>().mesh;
-        GT = GameObject.Find("GenerateTrees").GetComponent<GenerateTrees>();
         mc = GetComponent<MeshCollider>();
         mf = GetComponent<MeshFilter>();
         //mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
@@ -41,12 +39,11 @@ public class VoxelRender : MonoBehaviour
     }
 
     public void GenerateVoxelMesh(float customLowFreqAmp, float customMedFreqAmp, float customHighFreqAmp, int start_x, int start_z,
-        float XRandOffset1, float ZRandOffset1, float XRandOffset2, float ZRandOffset2, float XRandOffset3, float ZRandOffset3)
+        float XRandOffset1, float ZRandOffset1, float XRandOffset2, float ZRandOffset2, float XRandOffset3, float ZRandOffset3, int TreeDensity)
     {
         uvs = new List<Vector2>();
         vertices = new List<Vector3>();
         triangles = new List<int>();
-        GT.ClearLists();
         //StartCoroutine(Generation());
         for (int x = start_x; x < start_x + 31; x++)
         {
@@ -58,9 +55,9 @@ public class VoxelRender : MonoBehaviour
                 if (y > -lowFreqAmp)
                 {
                     MakeCube(new Vector3(x, (int)y + 100, z));
-                    if (Random.Range(1, 50) > 48)
+                    if (Random.Range(1, 1000) < TreeDensity)
                     {
-                        GT.MakeTree(new Vector3(x - 2, (int)y + 101, z - 2));
+                        GenerateTrees.instance.MakeTree(new Vector3(x - 2, (int)y + 101, z - 2));
                     }
                     //MakeCube(new Vector3(x, (int)y + 99, z));
                     //Debug.Log("making cube at : " + x + " : "+ (int)y + " : " + z);

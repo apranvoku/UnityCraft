@@ -51,13 +51,22 @@ public class PlaceBlock : MonoBehaviour
             {
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow, 0.1f);
                 //Vector3 nearestPoint = GetApproximateCornerVertex(hit.point, hit.transform.GetComponent<MeshFilter>().mesh, hit.normal);
-                Vector3 nearestPoint = GetApproximateCornerVertexTriangle(hit.triangleIndex, hit.normal, hit.transform.gameObject.GetComponent<VoxelRender>());
-                Debug.DrawLine(nearestPoint, nearestPoint + hit.normal, Color.red, 5f);
                 /*VoxelRender.instance.MakeCube(nearestPoint);//Add cube to mesh
                 VoxelRender.instance.UpdateMesh();*/ //
                 if(hit.transform.tag == "Voxel")
                 {
-                    Instantiate(Blocks[index], nearestPoint, Blocks[index].transform.rotation, SaveableBlocks.transform);
+                    if(hit.transform.gameObject.name.Contains("VoxelMesh"))
+                    {
+                        Vector3 nearestPoint = GetApproximateCornerVertexTriangle(hit.triangleIndex, hit.normal, hit.transform.gameObject.GetComponent<VoxelRender>());
+                        Debug.DrawLine(nearestPoint, nearestPoint + hit.normal, Color.red, 5f);
+                        Instantiate(Blocks[index], nearestPoint, Blocks[index].transform.rotation, SaveableBlocks.transform);
+                    }
+                    if(hit.transform.name == "GenerateTrees")
+                    {
+                        Vector3 nearestPoint = GetApproximateCornerVertexTriangleTrees(hit.triangleIndex, hit.normal);
+                        Debug.DrawLine(nearestPoint, nearestPoint + hit.normal, Color.red, 5f);
+                        Instantiate(Blocks[index], nearestPoint, Blocks[index].transform.rotation, SaveableBlocks.transform);
+                    }
                 }
                 else
                 {
@@ -109,6 +118,42 @@ public class PlaceBlock : MonoBehaviour
             }
         }
     }
+    public Vector3 GetApproximateCornerVertexTriangleTrees(int tindex, Vector3 normal)
+    {
+        List<Vector3> tpoints = new List<Vector3>();
+        if (tindex % 2 == 0)//Even
+        {
+            tpoints.Add(GenerateTrees.instance.vertices[(tindex / 2) * 4]);
+            tpoints.Add(GenerateTrees.instance.vertices[(tindex / 2) * 4 + 1]);
+            tpoints.Add(GenerateTrees.instance.vertices[(tindex / 2) * 4 + 2]);
+        }
+        else//Odd
+        {
+            tpoints.Add(GenerateTrees.instance.vertices[(tindex / 2) * 4]);
+            tpoints.Add(GenerateTrees.instance.vertices[(tindex / 2) * 4 + 2]);
+            tpoints.Add(GenerateTrees.instance.vertices[(tindex / 2) * 4 + 3]);
+        }
+        float x = 0; float y = 0; float z = 0;
+        for (int j = 0; j < tpoints.Count; j++)
+        {
+            x += tpoints[j].x;
+            y += tpoints[j].y;
+            z += tpoints[j].z;
+        }
+        /*Debug.Log(tindex);
+        foreach (Vector3 p in tpoints)
+        {
+            Debug.Log(p);
+        }*/
+        if (normal.x < 0 || normal.y < 0 || normal.z < 0)
+        {
+            return new Vector3(Mathf.Floor(x / 3f), Mathf.Floor(y / 3), Mathf.Floor(z / 3)) + normal;
+        }
+        else
+        {
+            return new Vector3(Mathf.Floor(x / 3f), Mathf.Floor(y / 3), Mathf.Floor(z / 3));
+        }
+    }
     public Vector3 GetApproximateCornerVertexTriangle(int tindex, Vector3 normal, VoxelRender vr)
     {
         List<Vector3> tpoints = new List<Vector3>();
@@ -145,7 +190,8 @@ public class PlaceBlock : MonoBehaviour
             return new Vector3(Mathf.Floor(x / 3f), Mathf.Floor(y / 3), Mathf.Floor(z / 3));
         }
     }
-    public Vector3 GetApproximateCornerVertex(Vector3 point, Mesh mesh, Vector3 normal)
+    /*
+    public Vector3 GetApproximateCornerVertex(Vector3 point, Mesh mesh, Vector3 normal) *** DEPRECATED ***
     {
         SortedDictionary<float, Vector3> pointDist = new SortedDictionary<float, Vector3>();
         // scan all vertices to find nearest
@@ -196,7 +242,7 @@ public class PlaceBlock : MonoBehaviour
         {
             return new Vector3(Mathf.Floor(x / 3f), Mathf.Floor(y / 3), Mathf.Floor(z / 3));
         }
-    }
+    }*/
 
 
 
