@@ -20,6 +20,8 @@ public class StartGame : MonoBehaviour
     public WorldSelect worldSelect;
     public SaveLoad SL;
     public TextMeshProUGUI saveInfo;
+    public TMP_InputField chunkWidth;
+    public TMP_InputField chunkLength;
     public TMP_InputField lowAmp;
     public TMP_InputField medAmp;
     public TMP_InputField highAmp;
@@ -30,9 +32,9 @@ public class StartGame : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        x_size = 128;
-        z_size = 128;
         playerController = GameObject.Find("Steve").GetComponent<PlayerController>();
+        chunkWidth = GameObject.Find("TerrainWidth").GetComponent<TMP_InputField>();
+        chunkLength = GameObject.Find("TerrainLength").GetComponent<TMP_InputField>();
         lowAmp = GameObject.Find("LowAmp").GetComponent<TMP_InputField>();
         medAmp = GameObject.Find("MedAmp").GetComponent<TMP_InputField>();
         highAmp = GameObject.Find("HighAmp").GetComponent<TMP_InputField>();
@@ -80,8 +82,8 @@ public class StartGame : MonoBehaviour
     public void SetSteveStart()
     {
         RaycastHit hit;
-        int x_mid = x_size/2;
-        int z_mid = z_size/2;
+        int x_mid = 16;
+        int z_mid = 16;
         Vector3 start = new Vector3(x_mid, 1000f, z_mid);
         if (Physics.Raycast(start, Vector3.up * -1f, out hit, Mathf.Infinity))
         {
@@ -109,7 +111,18 @@ public class StartGame : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         if (worldSelect.GetSelection() == 0)
         {
-            if(lowAmp.text == "")
+            if (chunkWidth.text == "")
+                chunkWidth.text = "4";
+            if (chunkLength.text == "")
+                chunkLength.text = "4";
+
+            float x_size_parse = Mathf.Clamp(float.Parse(chunkWidth.text), 1f, 8f);
+            float z_size_parse = Mathf.Clamp(float.Parse(chunkWidth.text), 1f, 8f);
+
+            x_size = (int)x_size_parse * 32;
+            z_size = (int)z_size_parse * 32;
+
+            if (lowAmp.text == "")
                 lowAmp.text = "30";
             if (medAmp.text == "")
                 medAmp.text = "10";

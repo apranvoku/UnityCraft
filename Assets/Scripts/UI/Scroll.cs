@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Scroll : MonoBehaviour
 {
     Material mt;
-    float scrollSpeed = 0.01f;
+    float scrollSpeed = 0.03f;
     // Start is called before the first frame update
     void Start()
     {
