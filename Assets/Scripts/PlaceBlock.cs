@@ -53,15 +53,15 @@ public class PlaceBlock : MonoBehaviour
                 //Vector3 nearestPoint = GetApproximateCornerVertex(hit.point, hit.transform.GetComponent<MeshFilter>().mesh, hit.normal);
                 /*VoxelRender.instance.MakeCube(nearestPoint);//Add cube to mesh
                 VoxelRender.instance.UpdateMesh();*/ //
-                if(hit.transform.tag == "Voxel")
+                if (hit.transform.tag == "Voxel")
                 {
-                    if(hit.transform.gameObject.name.Contains("VoxelMesh"))
+                    if (hit.transform.gameObject.name.Contains("VoxelMesh"))
                     {
                         Vector3 nearestPoint = GetApproximateCornerVertexTriangle(hit.triangleIndex, hit.normal, hit.transform.gameObject.GetComponent<VoxelRender>());
                         Debug.DrawLine(nearestPoint, nearestPoint + hit.normal, Color.red, 5f);
                         Instantiate(Blocks[index], nearestPoint, Blocks[index].transform.rotation, SaveableBlocks.transform);
                     }
-                    if(hit.transform.name == "GenerateTrees")
+                    if (hit.transform.name == "GenerateTrees")
                     {
                         Vector3 nearestPoint = GetApproximateCornerVertexTriangleTrees(hit.triangleIndex, hit.normal);
                         Debug.DrawLine(nearestPoint, nearestPoint + hit.normal, Color.red, 5f);
@@ -101,22 +101,45 @@ public class PlaceBlock : MonoBehaviour
                 {
                     if (hit.transform.tag == "Voxel")
                     {
-                        if(hit.transform.name.Contains("VoxelMesh"))
+                        if (hit.transform.name.Contains("VoxelMesh"))
                         {
                             hit.transform.GetComponent<VoxelRender>().DestroyCube(hit.triangleIndex);
                         }
-                        if(hit.transform.name == "GenerateTrees")
+                        if (hit.transform.name == "GenerateTrees")
                         {
                             Vector3 deletedPos;
-                            //if (hit.normal.x < 0 || hit.normal.y < 0 || hit.normal.z < 0)
-                            //{
-                            //    deletedPos = new Vector3((int)hit.point.x - hit.normal.x, (int)hit.point.y - hit.normal.y, (int)hit.point.z - hit.normal.z);
-                            //}
-                            //else
-                            //{
-                                deletedPos = new Vector3((int)hit.point.x +1, (int)hit.point.y+1, (int)hit.point.z+1);
-                            //}
-                            Debug.Log("hit position plus hit normal is " + deletedPos.ToString());
+                            if (Math.Round(hit.normal.x) == 1)
+                            {
+                                deletedPos = new Vector3((int)Math.Round(hit.point.x), (int)Math.Floor(hit.point.y), (int)Math.Floor(hit.point.z)) - hit.normal;
+                            }
+                            else if (Math.Round(hit.normal.y) == 1)
+                            {
+                                deletedPos = new Vector3((int)Math.Floor(hit.point.x), (int)Math.Round(hit.point.y), (int)Math.Floor(hit.point.z)) - hit.normal;
+                            }
+                            else if (Math.Round(hit.normal.z) == 1)
+                            {
+                                deletedPos = new Vector3((int)Math.Floor(hit.point.x), (int)Math.Floor(hit.point.y), (int)Math.Round(hit.point.z)) - hit.normal;
+                            }
+                            else if (Math.Round(hit.normal.x) == -1)
+                            {
+                                deletedPos = new Vector3((int)Math.Round(hit.point.x), (int)Math.Floor(hit.point.y), (int)Math.Floor(hit.point.z));
+                            }
+                            else if (Math.Round(hit.normal.y) == -1)
+                            {
+                                deletedPos = new Vector3((int)Math.Floor(hit.point.x), (int)Math.Round(hit.point.y), (int)Math.Floor(hit.point.z));
+                            }
+                            else if (Math.Round(hit.normal.z) == -1)
+                            {
+                                deletedPos = new Vector3((int)Math.Floor(hit.point.x), (int)Math.Floor(hit.point.y), (int)Math.Round(hit.point.z));
+                            }
+                            else
+                            {
+                                deletedPos = new Vector3((int)Math.Floor(hit.point.x), (int)Math.Floor(hit.point.y), (int)Math.Floor(hit.point.z));
+                            }
+                            //Debug.Log("Fixed pos is: " + deletedPos.ToString());
+                            //Debug.Log("hit position is " + hit.point.ToString());
+                            //Debug.Log("Casted int is : " + new Vector3((int)Math.Round(hit.point.x), (int)Math.Round(hit.point.y), (int)Math.Round(hit.point.z)));
+                            Debug.Log("hit normal is " + hit.normal.ToString());
                             GenerateTrees.instance.DestroyCube(hit.triangleIndex, deletedPos);
                         }
                     }
@@ -257,7 +280,7 @@ public class PlaceBlock : MonoBehaviour
 
 
 
-public void PlaceNewBlock(float x, float y, float z, string name)
+    public void PlaceNewBlock(float x, float y, float z, string name)
     {
         //Debug.Log(x + " " + y + " " + z + " " + name);
         if (name == "Block1")

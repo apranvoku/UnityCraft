@@ -249,7 +249,6 @@ public class GenerateTrees : MonoBehaviour
             uvs[i] = Vector2.zero;
         }
         TreePos.Remove(cubePos);
-
         UpdateMesh();
     }
 }

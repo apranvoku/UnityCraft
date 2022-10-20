@@ -45,9 +45,9 @@ public class VoxelRender : MonoBehaviour
         vertices = new List<Vector3>();
         triangles = new List<int>();
         //StartCoroutine(Generation());
-        for (int x = start_x; x < start_x + 31; x++)
+        for (int x = start_x; x < start_x + 32; x++)
         {
-            for (int z = start_z; z < start_z + 31; z++)
+            for (int z = start_z; z < start_z + 32; z++)
             {
                 y = ((customLowFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset1) / 100f, (z + ZRandOffset1) / 200f))) - 1)) // Low Frequency
                    + (customMedFreqAmp * ((2 * (Mathf.PerlinNoise((x + XRandOffset2) / 33f, (z + ZRandOffset2) / 30f))) - 1))  // Med Frequency
@@ -159,7 +159,7 @@ public class VoxelRender : MonoBehaviour
         triangles.Add(vcount - 4 + 3);
     }
     // Update is called once per frame
-    private void EasyUpdateMesh()
+    public void EasyUpdateMesh()
     {
         mesh.Clear();
         mesh.vertices = vertices.ToArray();

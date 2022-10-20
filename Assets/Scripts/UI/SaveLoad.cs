@@ -86,9 +86,9 @@ public class SaveLoad : MonoBehaviour
 
             // store as a Vector3
             Vector3 result = new Vector3(
-                float.Parse(sArray[0]) - 1f,
-                float.Parse(sArray[1]) - 1f,
-                float.Parse(sArray[2]) - 1f);
+                float.Parse(sArray[0]),
+                float.Parse(sArray[1]),
+                float.Parse(sArray[2]));
 
             bool isLeaf = Boolean.Parse(isLeafString);
             GenerateTrees.instance.MakeCube(result, isLeaf);
