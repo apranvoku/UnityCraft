@@ -4,6 +4,8 @@ using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
+
 public class StartGame : MonoBehaviour
 {
     public GameObject voxelMesh;
@@ -21,7 +23,9 @@ public class StartGame : MonoBehaviour
     public TMP_InputField lowAmp;
     public TMP_InputField medAmp;
     public TMP_InputField highAmp;
-    public Toggle TreesOn;
+    public TMP_InputField treeDensity;
+
+    public Vector3 Spawn;
 
     // Start is called before the first frame update
     void Start()
@@ -29,10 +33,10 @@ public class StartGame : MonoBehaviour
         x_size = 128;
         z_size = 128;
         playerController = GameObject.Find("Steve").GetComponent<PlayerController>();
-        TreesOn = GameObject.Find("ToggleTrees").GetComponent<Toggle>();
         lowAmp = GameObject.Find("LowAmp").GetComponent<TMP_InputField>();
         medAmp = GameObject.Find("MedAmp").GetComponent<TMP_InputField>();
         highAmp = GameObject.Find("HighAmp").GetComponent<TMP_InputField>();
+        treeDensity = GameObject.Find("TreeDensity").GetComponent<TMP_InputField>();
         saveInfo = GameObject.Find("SaveInfo").GetComponent<TextMeshProUGUI>();
         directionalLight = GameObject.Find("Directional Light");
         light_rot = directionalLight.transform.localRotation;
@@ -49,18 +53,28 @@ public class StartGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.R))
+        if(Input.GetKeyDown(KeyCode.E))
         {
             SL.SaveWorld();
             saveInfo.text = "Saved World!";
             StartCoroutine(ResetSaveInfo());
+        }
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            GameObject.Find("Steve").transform.position = Spawn;
+            playerController.rb.velocity = Vector3.zero;
         }
     }
 
     public IEnumerator ResetSaveInfo()
     {
         yield return new WaitForSeconds(3f);
-        saveInfo.text = "Press r to save...";
+        saveInfo.text = "Press e to save...";
     }
 
     public void SetSteveStart()
@@ -72,7 +86,8 @@ public class StartGame : MonoBehaviour
         if (Physics.Raycast(start, Vector3.up * -1f, out hit, Mathf.Infinity))
         {
             Debug.DrawLine(start, start - new Vector3(start.x, start.y - 1000f, start.z), Color.green, 15f);
-            GameObject.Find("Steve").transform.position = new Vector3((int)hit.point.x, (int)hit.point.y+10, (int)hit.point.z);
+            Spawn = new Vector3((int)hit.point.x, (int)hit.point.y + 10, (int)hit.point.z);
+            GameObject.Find("Steve").transform.position = Spawn;
         }
 
     }
@@ -100,6 +115,8 @@ public class StartGame : MonoBehaviour
                 medAmp.text = "10";
             if (highAmp.text == "")
                 highAmp.text = "1";
+            if (treeDensity.text == "")
+                treeDensity.text = "0";
 
             float rand1 = Random.Range(-10000, 10000);
             float rand2 = Random.Range(-10000, 10000);
@@ -108,12 +125,8 @@ public class StartGame : MonoBehaviour
             float rand5 = Random.Range(-10000, 10000);
             float rand6 = Random.Range(-10000, 10000);
 
-            GenerateTrees.instance.ClearLists(); 
-            int TreeDensity = 0;
-            if(TreesOn.isOn)
-            {
-                TreeDensity = 5;
-            }
+            GenerateTrees.instance.ClearLists();
+            int treeDensityNum = (int)Mathf.Clamp(float.Parse(treeDensity.text), 0f, 20f);
 
             for (int x = 0; x < x_size; x+= 32)
             {
@@ -121,7 +134,7 @@ public class StartGame : MonoBehaviour
                 {
                     VoxelRender render = Instantiate(voxelMesh, GameObject.Find("VoxelMeshParent").transform).GetComponent<VoxelRender>();
                     render.GenerateVoxelMesh(float.Parse(lowAmp.text), float.Parse(medAmp.text), float.Parse(highAmp.text), x, z,
-                        rand1, rand2, rand3, rand4, rand5, rand6, TreeDensity);
+                        rand1, rand2, rand3, rand4, rand5, rand6, treeDensityNum);
                     render.EasyUpdateMesh();
                 }
             }

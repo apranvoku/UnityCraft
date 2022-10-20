@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 turn;
     public float speed;
     private GameObject Head;
-    private Rigidbody rb;
+    public Rigidbody rb;
     public bool gravity_on;
     // Start is called before the first frame update
     void Start()
