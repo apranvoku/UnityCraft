@@ -74,23 +74,38 @@ public class PlaceBlock : MonoBehaviour
                 }
             }
         }
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        /*if (Input.GetAxis("Mouse ScrollWheel") < 0f) Disabled for now
         {
             index++;
             index = (index % Blocks.Count);
             Border.transform.position = CanvasBlocks.transform.GetChild(index).position;
-            //Debug.Log(index);
-        }
-        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        }*/
+            if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            index--;
-            if (index < 0)
-            {
-                index += Blocks.Count;
-            }
+            index = 0;
             Border.transform.position = CanvasBlocks.transform.GetChild(index).position;
-            //Debug.Log(index);
         }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            index = 1;
+            Border.transform.position = CanvasBlocks.transform.GetChild(index).position;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            index = 2;
+            Border.transform.position = CanvasBlocks.transform.GetChild(index).position;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            index = 3;
+            Border.transform.position = CanvasBlocks.transform.GetChild(index).position;
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            index = 4;
+            Border.transform.position = CanvasBlocks.transform.GetChild(index).position;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;

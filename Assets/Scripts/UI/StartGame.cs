@@ -30,6 +30,17 @@ public class StartGame : MonoBehaviour
     public Vector3 Spawn;
 
     // Start is called before the first frame update
+    private void OnEnable()
+    {
+        EventManager.OnClicked += StartGameFun;
+        EventManager.OnClicked += lockCursor;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnClicked -= StartGameFun;
+        EventManager.OnClicked -= lockCursor;
+    }
     void Start()
     {
         playerController = GameObject.Find("Steve").GetComponent<PlayerController>();
@@ -48,7 +59,6 @@ public class StartGame : MonoBehaviour
         worldSelect = GameObject.Find("WorldSelect").GetComponent<WorldSelect>();
         SL = GetComponent<SaveLoad>();
         butt = GetComponent<Button>();
-        butt.onClick.AddListener(StartGameFun);
         InitializeSaveDirectory();
     }
 
@@ -71,6 +81,24 @@ public class StartGame : MonoBehaviour
             GameObject.Find("Steve").transform.position = Spawn;
             playerController.rb.velocity = Vector3.zero;
         }
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            if(Cursor.lockState == CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
+
+    }
+
+    public void lockCursor()
+    {
+        //Cursor.lockState = CursorLockMode.Locked;
+        Debug.Log("Locking Cursor");
     }
 
     public IEnumerator ResetSaveInfo()
@@ -104,11 +132,11 @@ public class StartGame : MonoBehaviour
     }
     void StartGameFun()
     {
-        Debug.Log("Generating...");
+        Cursor.lockState = CursorLockMode.Locked;
+        //Debug.Log("Generating...");
         playerController.Gravity();
         directionalLight.transform.localRotation = light_rot;
         directionalLight.GetComponent<DayNightCycle>().active = true;
-        Cursor.lockState = CursorLockMode.Locked;
         if (worldSelect.GetSelection() == 0)
         {
             if (chunkWidth.text == "")
@@ -116,8 +144,8 @@ public class StartGame : MonoBehaviour
             if (chunkLength.text == "")
                 chunkLength.text = "4";
 
-            float x_size_parse = Mathf.Clamp(float.Parse(chunkWidth.text), 1f, 8f);
-            float z_size_parse = Mathf.Clamp(float.Parse(chunkWidth.text), 1f, 8f);
+            float x_size_parse = Mathf.Clamp(float.Parse(chunkWidth.text), 1f, 4f);
+            float z_size_parse = Mathf.Clamp(float.Parse(chunkWidth.text), 1f, 4f);
 
             x_size = (int)x_size_parse * 32;
             z_size = (int)z_size_parse * 32;
