@@ -20,6 +20,8 @@ public class StartGame : MonoBehaviour
     public WorldSelect worldSelect;
     public SaveLoad SL;
     public TextMeshProUGUI saveInfo;
+    public TextMeshProUGUI FPS;
+    public TextMeshProUGUI Vertices;
     public TMP_InputField chunkWidth;
     public TMP_InputField chunkLength;
     public TMP_InputField lowAmp;
@@ -28,6 +30,7 @@ public class StartGame : MonoBehaviour
     public TMP_InputField treeDensity;
 
     public Vector3 Spawn;
+    public int FPScounter;
 
     // Start is called before the first frame update
     private void OnEnable()
@@ -43,6 +46,7 @@ public class StartGame : MonoBehaviour
     }
     void Start()
     {
+        FPScounter = 0;
         playerController = GameObject.Find("Steve").GetComponent<PlayerController>();
         chunkWidth = GameObject.Find("TerrainWidth").GetComponent<TMP_InputField>();
         chunkLength = GameObject.Find("TerrainLength").GetComponent<TMP_InputField>();
@@ -51,6 +55,8 @@ public class StartGame : MonoBehaviour
         highAmp = GameObject.Find("HighAmp").GetComponent<TMP_InputField>();
         treeDensity = GameObject.Find("TreeDensity").GetComponent<TMP_InputField>();
         saveInfo = GameObject.Find("SaveInfo").GetComponent<TextMeshProUGUI>();
+        FPS = GameObject.Find("FPS").GetComponent<TextMeshProUGUI>();
+        Vertices = GameObject.Find("Verts").GetComponent<TextMeshProUGUI>();
         directionalLight = GameObject.Find("Directional Light");
         light_rot = directionalLight.transform.localRotation;
         directionalLight.transform.localRotation = Quaternion.Euler(new Vector3(-90f, 0f, 0f));
@@ -65,7 +71,14 @@ public class StartGame : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.E))
+        FPScounter++;
+        if(FPScounter == 20)
+        {
+            FPS.text = "FPS: " + ((int)(1.0f / Time.deltaTime)).ToString();
+            FPScounter = 0;
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
         {
             SL.SaveWorld();
             saveInfo.text = "Saved World!";
@@ -213,5 +226,12 @@ public class StartGame : MonoBehaviour
         CanvasMenu.GetComponent<Canvas>().enabled = false;
         CanvasPersistent.GetComponent<Canvas>().enabled = true;
         SetSteveStart();
+
+        int totalVerts = 0;
+        foreach (Transform t in GameObject.Find("VoxelMeshParent").transform)
+        {
+            totalVerts += t.GetComponent<MeshFilter>().mesh.vertices.Length;
+        }
+        Vertices.text = "Vertices: " + totalVerts.ToString();
     }
 }
